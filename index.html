@@ -1,0 +1,2632 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="StreamEmote reads your heart rate, breathing and stress from the webcam you already own - and puts them on screen in OBS, in real time.">
+<title>StreamEmote</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=Karla:wght@400;500;600&family=Martian+Mono:wght@400;500;600&display=swap">
+
+<style>
+/* ============================================================
+   TOKENS — dark-first. Bare :root is the dark palette; light is
+   layered on top for prefers-color-scheme AND the explicit stamp.
+   ============================================================ */
+:root {
+  color-scheme: dark;
+
+  --ground:      #0B0A10;
+  --ground-alt:  #100E18;
+  --panel:       #141220;
+  --panel-2:     #1B1828;
+  --line:        #241F36;
+  --line-soft:   #1B1728;
+
+  --ink:         #EDEAF6;
+  --ink-2:       #B4ACCB;
+  --ink-3:       #837B9C;
+
+  --brand:       #7C5CFF;
+  --brand-ink:   #FFFFFF;
+  --brand-soft:  rgba(124, 92, 255, 0.14);
+  --brand-line:  rgba(124, 92, 255, 0.38);
+
+  --hr:          #FF5470;
+  --breath:      #4CC9F0;
+  --ok:          #34D8A0;
+  --warn:        #FFB43D;
+  --crit:        #FF5470;
+
+  --hr-soft:     rgba(255, 84, 112, 0.13);
+  --breath-soft: rgba(76, 201, 240, 0.13);
+  --ok-soft:     rgba(52, 216, 160, 0.13);
+  --warn-soft:   rgba(255, 180, 61, 0.14);
+
+  /* emote packs — glyph colour + disc behind it */
+  --p-happy:     #F0B429;  --p-happy-bg:   rgba(240, 180, 41, 0.15);
+  --p-angry:     #FF5470;  --p-angry-bg:   rgba(255, 84, 112, 0.15);
+  --p-shocked:   #9B80FF;  --p-shocked-bg: rgba(124, 92, 255, 0.20);
+  --p-laughing:  #34D8A0;  --p-laughing-bg:rgba(52, 216, 160, 0.15);
+  --p-sad:       #4CC9F0;  --p-sad-bg:     rgba(76, 201, 240, 0.15);
+
+  --stage:       #08070C;
+  --stage-grid:  rgba(124, 92, 255, 0.07);
+  --shadow:      0 1px 2px rgba(0,0,0,.5), 0 18px 44px -20px rgba(0,0,0,.8);
+
+  --fd: "Archivo", "Helvetica Neue", Arial, sans-serif;
+  --fb: "Karla", "Helvetica Neue", Arial, sans-serif;
+  --fm: "Martian Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+
+  --wrap: 1180px;
+  --r-sm: 6px;
+  --r-md: 10px;
+  --r-lg: 16px;
+}
+
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    color-scheme: light;
+    --ground:      #F7F6FB;
+    --ground-alt:  #FFFFFF;
+    --panel:       #FFFFFF;
+    --panel-2:     #F2F0F9;
+    --line:        #E1DDF0;
+    --line-soft:   #EBE8F5;
+
+    --ink:         #16121F;
+    --ink-2:       #4E4763;
+    --ink-3:       #6F678A;
+
+    --brand:       #5B3EE8;
+    --brand-ink:   #FFFFFF;
+    --brand-soft:  rgba(91, 62, 232, 0.09);
+    --brand-line:  rgba(91, 62, 232, 0.28);
+
+    --hr:          #D4234A;
+    --breath:      #0B7FAE;
+    --ok:          #0B8F66;
+    --warn:        #9A6100;
+    --crit:        #D4234A;
+
+    --hr-soft:     rgba(212, 35, 74, 0.09);
+    --breath-soft: rgba(11, 127, 174, 0.09);
+    --ok-soft:     rgba(11, 143, 102, 0.09);
+    --warn-soft:   rgba(154, 97, 0, 0.10);
+
+    --p-happy:     #A97605;  --p-happy-bg:   #FDF1CE;
+    --p-angry:     #D4234A;  --p-angry-bg:   #FBE2E5;
+    --p-shocked:   #5B3EE8;  --p-shocked-bg: #E8E3FD;
+    --p-laughing:  #0B8F66;  --p-laughing-bg:#DBF4E7;
+    --p-sad:       #0B7FAE;  --p-sad-bg:     #DEEDFA;
+
+    --stage:       #14111C;
+    --stage-grid:  rgba(124, 92, 255, 0.10);
+    --shadow:      0 1px 2px rgba(22,18,31,.06), 0 16px 40px -22px rgba(22,18,31,.28);
+  }
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
+  --ground:      #F7F6FB;
+  --ground-alt:  #FFFFFF;
+  --panel:       #FFFFFF;
+  --panel-2:     #F2F0F9;
+  --line:        #E1DDF0;
+  --line-soft:   #EBE8F5;
+
+  --ink:         #16121F;
+  --ink-2:       #4E4763;
+  --ink-3:       #6F678A;
+
+  --brand:       #5B3EE8;
+  --brand-ink:   #FFFFFF;
+  --brand-soft:  rgba(91, 62, 232, 0.09);
+  --brand-line:  rgba(91, 62, 232, 0.28);
+
+  --hr:          #D4234A;
+  --breath:      #0B7FAE;
+  --ok:          #0B8F66;
+  --warn:        #9A6100;
+  --crit:        #D4234A;
+
+  --hr-soft:     rgba(212, 35, 74, 0.09);
+  --breath-soft: rgba(11, 127, 174, 0.09);
+  --ok-soft:     rgba(11, 143, 102, 0.09);
+  --warn-soft:   rgba(154, 97, 0, 0.10);
+
+  --p-happy:     #A97605;  --p-happy-bg:   #FDF1CE;
+  --p-angry:     #D4234A;  --p-angry-bg:   #FBE2E5;
+  --p-shocked:   #5B3EE8;  --p-shocked-bg: #E8E3FD;
+  --p-laughing:  #0B8F66;  --p-laughing-bg:#DBF4E7;
+  --p-sad:       #0B7FAE;  --p-sad-bg:     #DEEDFA;
+
+  --stage:       #14111C;
+  --stage-grid:  rgba(124, 92, 255, 0.10);
+  --shadow:      0 1px 2px rgba(22,18,31,.06), 0 16px 40px -22px rgba(22,18,31,.28);
+}
+
+/* ============================================================
+   BASE
+   ============================================================ */
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--ground);
+  color: var(--ink);
+  font-family: var(--fb);
+  font-size: 17px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--fd);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  text-wrap: balance;
+  margin: 0;
+}
+
+p { margin: 0; }
+a { color: inherit; }
+
+:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 3px;
+  border-radius: 3px;
+}
+
+.wrap {
+  max-width: var(--wrap);
+  margin-inline: auto;
+  padding-inline: 28px;
+}
+
+.mono {
+  font-family: var(--fm);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+
+.tnum { font-variant-numeric: tabular-nums; }
+
+/* ============================================================
+   NAV
+   ============================================================ */
+.nav {
+  position: sticky;
+  top: 0;
+  z-index: 60;
+  background: var(--ground);
+  background: color-mix(in srgb, var(--ground) 88%, transparent);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--line-soft);
+}
+.nav-in {
+  max-width: var(--wrap);
+  margin-inline: auto;
+  padding: 13px 28px;
+  display: flex;
+  align-items: center;
+  gap: 32px;
+}
+.brand {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  margin-right: auto;
+}
+/* Two lockup variants — "Stream" is white on dark grounds, black on
+   light. Both defined here; the theme blocks only swap which shows. */
+.brand-logo {
+  display: block;
+  width: auto;
+  height: 26px;
+  flex: none;
+}
+.brand-logo-light { display: none; }
+
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) .brand-logo-dark { display: none; }
+  :root:not([data-theme="dark"]) .brand-logo-light { display: block; }
+}
+:root[data-theme="light"] .brand-logo-dark { display: none; }
+:root[data-theme="light"] .brand-logo-light { display: block; }
+.nav-links {
+  display: flex;
+  gap: 26px;
+  font-size: 14.5px;
+  font-weight: 500;
+  color: var(--ink-2);
+}
+.nav-links a { text-decoration: none; }
+.nav-links a:hover { color: var(--ink); }
+
+/* ============================================================
+   BUTTONS
+   ============================================================ */
+.btn {
+  font-family: var(--fd);
+  font-weight: 600;
+  font-size: 15px;
+  letter-spacing: -0.01em;
+  padding: 11px 20px;
+  border-radius: var(--r-sm);
+  border: 1px solid transparent;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+  transition: background .16s, border-color .16s, color .16s, transform .16s;
+}
+.btn-primary {
+  background: var(--brand);
+  color: var(--brand-ink);
+  box-shadow: 0 8px 22px -12px var(--brand);
+}
+.btn-primary:hover { transform: translateY(-1px); }
+.btn-ghost {
+  background: transparent;
+  color: var(--ink);
+  border-color: var(--line);
+}
+.btn-ghost:hover { border-color: var(--brand-line); background: var(--brand-soft); }
+.btn-sm { font-size: 14px; padding: 8px 15px; }
+
+/* ============================================================
+   SECTION SCAFFOLD — hairline bands, mono label in the gutter
+   ============================================================ */
+.band { border-top: 1px solid var(--line-soft); }
+.band-alt { background: var(--ground-alt); }
+.band-in { padding-block: 96px; }
+.band-in-tight { padding-block: 68px; }
+
+.shead {
+  display: grid;
+  grid-template-columns: 132px minmax(0, 1fr);
+  gap: 28px;
+  align-items: start;
+  margin-bottom: 52px;
+}
+.shead-label {
+  color: var(--ink-3);
+  padding-top: 8px;
+  border-top: 1px solid var(--line);
+}
+.shead-body { max-width: 34em; }
+.shead h2 {
+  font-size: clamp(28px, 3.6vw, 40px);
+  margin-bottom: 14px;
+}
+.shead p {
+  color: var(--ink-2);
+  font-size: 17px;
+  max-width: 32em;
+}
+
+/* ============================================================
+   HERO
+   ============================================================ */
+.hero-in {
+  padding-block: 64px 76px;
+  display: grid;
+  grid-template-columns: minmax(0, 0.88fr) minmax(0, 1.12fr);
+  gap: 56px;
+  align-items: center;
+}
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  color: var(--ink-3);
+  margin-bottom: 22px;
+}
+.eyebrow-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--hr);
+  flex: none;
+}
+.hero h1 {
+  font-size: clamp(42px, 5.6vw, 68px);
+  margin-bottom: 22px;
+}
+.hero h1 em {
+  font-style: normal;
+  color: var(--brand);
+}
+.hero-sub {
+  color: var(--ink-2);
+  font-size: 18.5px;
+  line-height: 1.55;
+  max-width: 30em;
+  margin-bottom: 30px;
+}
+.hero-cta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 11px;
+  margin-bottom: 26px;
+}
+.hero-facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 20px;
+  color: var(--ink-3);
+  font-size: 11px;
+}
+.hero-facts span {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+.hero-facts svg { flex: none; }
+
+/* ============================================================
+   LIVE DEMO
+   ============================================================ */
+.demo {
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  background: var(--panel);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+.demo-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 14px;
+  border-bottom: 1px solid var(--line-soft);
+  background: var(--panel-2);
+}
+.demo-bar-title {
+  color: var(--ink-3);
+  margin-right: auto;
+}
+.scenes {
+  display: flex;
+  gap: 4px;
+  background: var(--ground);
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+  padding: 3px;
+}
+.scene-btn {
+  font-family: var(--fm);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  background: transparent;
+  border: 0;
+  border-radius: 4px;
+  padding: 5px 10px;
+  cursor: pointer;
+  transition: background .15s, color .15s;
+}
+.scene-btn:hover { color: var(--ink); }
+.scene-btn[aria-pressed="true"] {
+  background: var(--brand);
+  color: var(--brand-ink);
+}
+
+/* stage = the OBS scene */
+.stage {
+  position: relative;
+  aspect-ratio: 16 / 10;
+  background: var(--stage);
+  background-image:
+    linear-gradient(var(--stage-grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--stage-grid) 1px, transparent 1px);
+  background-size: 34px 34px;
+  overflow: hidden;
+}
+.tint {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity .5s ease;
+  pointer-events: none;
+  mix-blend-mode: screen;
+}
+.tint.on { opacity: 1; }
+.tint-calm  { background: radial-gradient(58% 68% at 50% 40%, rgba(76,201,240,.30), transparent 72%); }
+.tint-clutch{ background: radial-gradient(58% 68% at 50% 40%, rgba(255,180,61,.26), transparent 72%); }
+.tint-rage  { background: radial-gradient(58% 68% at 50% 40%, rgba(255,84,112,.34), transparent 70%); }
+
+/* minimal subject + rPPG region-of-interest */
+.subject {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  transform: translateX(-50%);
+  height: 82%;
+  max-height: 330px;
+  aspect-ratio: 200 / 210;
+  width: auto;
+}
+.roi-txt {
+  font-family: var(--fm);
+  font-size: 7.5px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+}
+
+/* tally light */
+.tally {
+  position: absolute;
+  top: 14px; left: 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 4px 9px 4px 7px;
+  border-radius: 4px;
+  background: rgba(8,7,12,.72);
+  border: 1px solid rgba(255,84,112,.4);
+  font-family: var(--fm);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  color: #FF8095;
+}
+.tally-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: #FF5470;
+  box-shadow: 0 0 8px #FF5470;
+  animation: tally 2s ease-in-out infinite;
+}
+@keyframes tally { 0%,100% { opacity: 1 } 50% { opacity: .3 } }
+
+.mode-chip {
+  position: absolute;
+  top: 14px; right: 14px;
+  padding: 4px 9px;
+  border-radius: 4px;
+  background: rgba(8,7,12,.72);
+  border: 1px solid rgba(237,234,246,.16);
+  font-family: var(--fm);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  color: #EDEAF6;
+  opacity: 0;
+  transition: opacity .35s;
+}
+.mode-chip.on { opacity: 1; }
+
+/* the emote that fires on reaction */
+.emote {
+  position: absolute;
+  right: 11%;
+  top: 24%;
+  width: 56px;
+  height: 56px;
+  padding: 12px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  opacity: 0;
+  transform: scale(.5) translateY(8px);
+  pointer-events: none;
+  box-shadow: 0 10px 26px rgba(0,0,0,.5);
+}
+.emote.pop { animation: pop 1.9s cubic-bezier(.2,.9,.25,1) forwards; }
+@keyframes pop {
+  0%   { opacity: 0; transform: scale(.4) translateY(14px); }
+  16%  { opacity: 1; transform: scale(1.15) translateY(-4px); }
+  30%  { transform: scale(1) translateY(0); }
+  78%  { opacity: 1; }
+  100% { opacity: 0; transform: scale(.96) translateY(-16px); }
+}
+
+/* the overlay itself — lower third */
+.overlay {
+  position: absolute;
+  left: 14px; right: 14px; bottom: 14px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1px;
+  background: rgba(237,234,246,.10);
+  border: 1px solid rgba(237,234,246,.13);
+  border-radius: 9px;
+  overflow: hidden;
+  backdrop-filter: blur(9px);
+}
+.ov {
+  background: rgba(8,7,12,.74);
+  padding: 9px 11px 10px;
+  min-width: 0;
+}
+.ov-top {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 5px;
+}
+.ov-dot { width: 5px; height: 5px; border-radius: 50%; flex: none; }
+.ov-name {
+  font-family: var(--fm);
+  font-size: 8px;
+  font-weight: 600;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: rgba(237,234,246,.62);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.ov-val {
+  font-family: var(--fd);
+  font-weight: 700;
+  font-size: 27px;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  color: #EDEAF6;
+  display: flex;
+  align-items: baseline;
+  gap: 5px;
+}
+.ov-unit {
+  font-family: var(--fm);
+  font-size: 8px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  color: rgba(237,234,246,.5);
+}
+.ov-state {
+  font-family: var(--fd);
+  font-weight: 700;
+  font-size: 20px;
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+#pulse {
+  display: block;
+  width: 100%;
+  height: 26px;
+  margin-top: 4px;
+}
+.heart {
+  transform-origin: center;
+  will-change: transform;
+  margin-left: auto;
+  flex: none;
+}
+
+/* signal confidence readout under the stage */
+.demo-foot {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 11px 14px;
+  border-top: 1px solid var(--line-soft);
+  background: var(--panel-2);
+  flex-wrap: wrap;
+}
+.conf {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--fm);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+}
+.conf-bars { display: inline-flex; gap: 2px; align-items: flex-end; }
+.conf-bars i {
+  display: block;
+  width: 3px;
+  background: var(--line);
+  border-radius: 1px;
+}
+.conf-bars i:nth-child(1) { height: 6px; }
+.conf-bars i:nth-child(2) { height: 9px; }
+.conf-bars i:nth-child(3) { height: 12px; }
+.demo-foot-note {
+  color: var(--ink-3);
+  font-size: 11.5px;
+  font-family: var(--fb);
+  margin-left: auto;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+/* ============================================================
+   TRUST STRIP
+   ============================================================ */
+.trust-in {
+  padding-block: 26px;
+  display: flex;
+  align-items: center;
+  gap: 14px 34px;
+  flex-wrap: wrap;
+}
+.trust-label { color: var(--ink-3); }
+.trust-list {
+  display: flex;
+  gap: 10px 26px;
+  flex-wrap: wrap;
+  font-family: var(--fd);
+  font-weight: 600;
+  font-size: 14.5px;
+  color: var(--ink-2);
+  letter-spacing: -0.01em;
+}
+.trust-list span { display: inline-flex; align-items: center; gap: 8px; }
+
+/* ============================================================
+   SIGNALS
+   ============================================================ */
+.signals {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1px;
+  background: var(--line);
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+}
+.sig {
+  background: var(--panel);
+  padding: 26px 24px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.sig-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--line-soft);
+}
+.sig-name {
+  font-family: var(--fd);
+  font-weight: 700;
+  font-size: 19px;
+  letter-spacing: -0.02em;
+}
+.sig-rate {
+  font-family: var(--fm);
+  font-size: 9.5px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  white-space: nowrap;
+}
+.sig p { color: var(--ink-2); font-size: 15.5px; flex: 1; }
+.sig-spec {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line-soft);
+}
+.sig-spec-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-family: var(--fm);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+}
+.sig-spec-k { color: var(--ink-3); text-transform: uppercase; letter-spacing: 0.11em; }
+.sig-spec-v { color: var(--ink); }
+
+/* ============================================================
+   PRIVACY — the elevated section
+   ============================================================ */
+.priv {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
+  gap: 56px;
+  align-items: center;
+}
+.priv h2 {
+  font-size: clamp(30px, 4vw, 44px);
+  margin-bottom: 18px;
+}
+.priv-lede {
+  color: var(--ink-2);
+  font-size: 18px;
+  margin-bottom: 24px;
+  max-width: 30em;
+}
+.priv-points { display: grid; gap: 2px; }
+.priv-point {
+  display: grid;
+  grid-template-columns: 22px minmax(0, 1fr);
+  gap: 13px;
+  padding: 13px 0;
+  border-top: 1px solid var(--line-soft);
+  align-items: start;
+}
+.priv-point:last-child { border-bottom: 1px solid var(--line-soft); }
+.priv-point svg { margin-top: 3px; }
+.priv-point b {
+  font-family: var(--fd);
+  font-weight: 700;
+  font-size: 15.5px;
+  letter-spacing: -0.01em;
+  display: block;
+}
+.priv-point span { color: var(--ink-2); font-size: 15px; }
+
+/* the pipeline diagram */
+.pipe {
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  background: var(--panel);
+  padding: 24px 22px;
+  box-shadow: var(--shadow);
+}
+.pipe-title {
+  color: var(--ink-3);
+  padding-bottom: 14px;
+  margin-bottom: 18px;
+  border-bottom: 1px solid var(--line-soft);
+}
+.pipe-flow { display: grid; gap: 0; }
+.pipe-node {
+  display: grid;
+  grid-template-columns: 30px minmax(0, 1fr);
+  gap: 14px;
+  align-items: center;
+}
+.pipe-num {
+  font-family: var(--fm);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: var(--brand);
+  width: 30px; height: 30px;
+  border: 1px solid var(--brand-line);
+  background: var(--brand-soft);
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+}
+.pipe-node strong {
+  font-family: var(--fd);
+  font-weight: 700;
+  font-size: 15px;
+  letter-spacing: -0.01em;
+  display: block;
+}
+.pipe-node em {
+  font-style: normal;
+  color: var(--ink-3);
+  font-size: 13.5px;
+  font-family: var(--fb);
+}
+.pipe-rail {
+  width: 1px;
+  height: 22px;
+  background: var(--line);
+  margin-left: 15px;
+}
+.pipe-cut {
+  margin-top: 20px;
+  padding-top: 18px;
+  border-top: 1px dashed var(--line);
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  color: var(--ink-3);
+  font-size: 13px;
+}
+.pipe-cut b { color: var(--ink); font-family: var(--fd); font-size: 13.5px; }
+
+/* ============================================================
+   STEPS (a real sequence — numbering earns its place here)
+   ============================================================ */
+.steps { display: grid; gap: 0; }
+.step {
+  display: grid;
+  grid-template-columns: 88px minmax(0, 1fr) minmax(0, 1fr);
+  gap: 28px;
+  padding: 26px 0;
+  border-top: 1px solid var(--line-soft);
+  align-items: baseline;
+}
+.step:last-child { border-bottom: 1px solid var(--line-soft); }
+.step-n {
+  font-family: var(--fm);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: var(--brand);
+}
+.step h3 {
+  font-size: 21px;
+  font-weight: 700;
+}
+.step p { color: var(--ink-2); font-size: 16px; }
+
+/* ============================================================
+   REACTIONS + FILTERS
+   ============================================================ */
+.react {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+}
+.mood {
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  background: var(--panel);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+.mood-strip {
+  height: 108px;
+  position: relative;
+  background: var(--stage);
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+}
+.mood-strip::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+}
+.mood-calm   .mood-strip::after { background: radial-gradient(64% 78% at 50% 46%, rgba(76,201,240,.34), transparent 72%); }
+.mood-clutch .mood-strip::after { background: radial-gradient(64% 78% at 50% 46%, rgba(255,180,61,.30), transparent 72%); }
+.mood-rage   .mood-strip::after { background: radial-gradient(64% 78% at 50% 46%, rgba(255,84,112,.38), transparent 70%); }
+.mood-emote {
+  position: relative;
+  z-index: 1;
+  width: 64px;
+  height: 64px;
+  padding: 14px;
+  box-shadow: 0 8px 20px rgba(0,0,0,.42);
+}
+.mood-tag {
+  position: absolute;
+  z-index: 1;
+  top: 9px; left: 9px;
+  font-family: var(--fm);
+  font-size: 8px;
+  font-weight: 600;
+  letter-spacing: 0.13em;
+  color: rgba(237,234,246,.78);
+  background: rgba(8,7,12,.7);
+  border: 1px solid rgba(237,234,246,.16);
+  border-radius: 3px;
+  padding: 3px 7px;
+}
+.mood-body { padding: 16px 17px 17px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
+.mood-body h3 { font-size: 17px; font-weight: 700; }
+.mood-body p { color: var(--ink-2); font-size: 14.5px; }
+.mood-vitals {
+  display: flex;
+  gap: 12px;
+  padding-top: 12px;
+  margin-top: auto;
+  border-top: 1px solid var(--line-soft);
+  font-family: var(--fm);
+  font-size: 9.5px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+}
+.react-notes {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+  margin-top: 26px;
+  padding-top: 24px;
+  border-top: 1px solid var(--line-soft);
+}
+.react-note b {
+  font-family: var(--fd);
+  font-weight: 700;
+  font-size: 15px;
+  letter-spacing: -0.01em;
+  display: block;
+  margin-bottom: 5px;
+}
+.react-note span { color: var(--ink-2); font-size: 14.5px; }
+
+/* ---- emote pack glyphs ---- */
+.glyph { display: block; width: 100%; height: 100%; }
+.disc {
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  flex: none;
+}
+.p-happy    { color: var(--p-happy);    background: var(--p-happy-bg); }
+.p-angry    { color: var(--p-angry);    background: var(--p-angry-bg); }
+.p-shocked  { color: var(--p-shocked);  background: var(--p-shocked-bg); }
+.p-laughing { color: var(--p-laughing); background: var(--p-laughing-bg); }
+.p-sad      { color: var(--p-sad);      background: var(--p-sad-bg); }
+
+.packs {
+  margin-top: 28px;
+  padding-top: 26px;
+  border-top: 1px solid var(--line-soft);
+}
+.packs-head {
+  display: flex;
+  align-items: baseline;
+  gap: 8px 14px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+.packs-head .mono { color: var(--ink-3); }
+.packs-head span:last-child { color: var(--ink-2); font-size: 14.5px; }
+.pack-row {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 10px;
+}
+/* Fixed height, and a border on every state — so the selected chip
+   is the same size as the rest and nothing shifts on click. */
+.pack {
+  height: 110px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 0 8px;
+  background: var(--panel);
+  border: 1.5px solid var(--line);
+  border-radius: var(--r-md);
+  cursor: pointer;
+  font: inherit;
+  transition: border-color .16s, background .16s;
+}
+.pack:hover { border-color: var(--brand-line); }
+.pack[aria-checked="true"] {
+  border-color: var(--brand);
+  background: var(--brand-soft);
+}
+.pack-disc { width: 48px; height: 48px; padding: 10px; }
+.pack-name {
+  font-family: var(--fd);
+  font-weight: 600;
+  font-size: 14px;
+  letter-spacing: -0.01em;
+  line-height: 1;
+  color: var(--ink-2);
+}
+.pack[aria-checked="true"] .pack-name { color: var(--ink); }
+.packs-note { margin-top: 15px; color: var(--ink-3); font-size: 13.5px; }
+.packs-note a { color: var(--brand); text-decoration: none; }
+.packs-note a:hover { text-decoration: underline; }
+
+/* ============================================================
+   FEATURES + CONFIDENCE CALLOUT
+   ============================================================ */
+.feat-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+  gap: 20px;
+  align-items: stretch;
+}
+.feat-list { display: grid; gap: 0; }
+.feat {
+  display: grid;
+  grid-template-columns: 20px minmax(0, 1fr);
+  gap: 14px;
+  padding: 19px 0;
+  border-top: 1px solid var(--line-soft);
+  align-items: start;
+}
+.feat:last-child { border-bottom: 1px solid var(--line-soft); }
+.feat svg { margin-top: 3px; }
+.feat b {
+  font-family: var(--fd);
+  font-weight: 700;
+  font-size: 16.5px;
+  letter-spacing: -0.015em;
+  display: block;
+  margin-bottom: 3px;
+}
+.feat span { color: var(--ink-2); font-size: 15px; }
+
+.callout {
+  border: 1px solid var(--brand-line);
+  background: linear-gradient(168deg, var(--brand-soft), transparent 62%), var(--panel);
+  border-radius: var(--r-lg);
+  padding: 26px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.callout .mono { color: var(--brand); }
+.callout h3 { font-size: 23px; }
+.callout p { color: var(--ink-2); font-size: 15.5px; }
+.callout-demo {
+  margin-top: auto;
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  background: var(--ground);
+  padding: 14px;
+  display: grid;
+  gap: 10px;
+}
+.callout-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--fm);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.09em;
+}
+.callout-row .tnum {
+  font-family: var(--fd);
+  font-size: 17px;
+  letter-spacing: -0.02em;
+  margin-left: auto;
+}
+
+/* ============================================================
+   RECAP
+   ============================================================ */
+.recap {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 340px;
+  gap: 48px;
+  align-items: center;
+}
+.recap h2 { font-size: clamp(28px, 3.6vw, 40px); margin-bottom: 16px; }
+.recap p { color: var(--ink-2); font-size: 17px; max-width: 30em; }
+.card-recap {
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  background: var(--panel);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+.card-recap-h {
+  padding: 13px 18px;
+  border-bottom: 1px solid var(--line-soft);
+  background: var(--panel-2);
+  color: var(--ink-3);
+}
+.card-recap-b { padding: 6px 18px 18px; }
+.rrow {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 13px 0;
+  border-bottom: 1px solid var(--line-soft);
+}
+.rrow-k {
+  font-family: var(--fm);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.rrow-v {
+  font-family: var(--fd);
+  font-weight: 700;
+  font-size: 21px;
+  letter-spacing: -0.025em;
+}
+.rrow-v small {
+  font-family: var(--fm);
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  color: var(--ink-3);
+  margin-left: 3px;
+}
+.pill {
+  font-family: var(--fm);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  padding: 4px 9px;
+  border-radius: 4px;
+}
+.card-recap-b .btn { width: 100%; justify-content: center; margin-top: 18px; }
+
+/* ============================================================
+   PRICING
+   ============================================================ */
+.price-head {
+  text-align: center;
+  max-width: 34em;
+  margin: 0 auto 40px;
+}
+.price-head h2 { font-size: clamp(30px, 4vw, 44px); margin-bottom: 14px; }
+.price-head p { color: var(--ink-2); }
+.toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  margin-top: 24px;
+  padding: 3px;
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+  background: var(--panel);
+}
+.toggle button {
+  font-family: var(--fm);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  background: transparent;
+  border: 0;
+  border-radius: 4px;
+  padding: 7px 14px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+.toggle button[aria-pressed="true"] { background: var(--brand); color: var(--brand-ink); }
+.save {
+  font-size: 9px;
+  padding: 2px 5px;
+  border-radius: 3px;
+  background: var(--ok-soft);
+  color: var(--ok);
+  letter-spacing: 0.08em;
+}
+.toggle button[aria-pressed="true"] .save { background: rgba(255,255,255,.2); color: var(--brand-ink); }
+
+.plans {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+  /* stretch, so all three boxes match the tallest and the CTAs
+     land on one line at the bottom */
+  align-items: stretch;
+}
+.plan {
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  background: var(--panel);
+  padding: 26px 24px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.plan-pro {
+  border-color: var(--brand-line);
+  box-shadow: var(--shadow);
+  position: relative;
+}
+.plan-flag {
+  position: absolute;
+  top: -1px; right: 20px;
+  transform: translateY(-50%);
+  background: var(--brand);
+  color: var(--brand-ink);
+  font-family: var(--fm);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 4px 9px;
+  border-radius: 3px;
+}
+.plan-name {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+.plan-name h3 { font-size: 20px; }
+.plan-for { color: var(--ink-3); font-size: 14px; }
+.plan-cost { display: flex; align-items: baseline; gap: 6px; }
+.plan-amt {
+  font-family: var(--fd);
+  font-weight: 800;
+  font-size: 42px;
+  letter-spacing: -0.04em;
+  line-height: 1;
+}
+.plan-per {
+  font-family: var(--fm);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.09em;
+  color: var(--ink-3);
+}
+.plan-bill {
+  font-family: var(--fm);
+  font-size: 9.5px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-top: -10px;
+}
+.plan-inherit {
+  font-family: var(--fm);
+  font-size: 9.5px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--line-soft);
+}
+.plan ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 10px;
+  flex: 1;
+}
+.plan li {
+  display: grid;
+  grid-template-columns: 15px minmax(0, 1fr);
+  gap: 10px;
+  font-size: 15px;
+  color: var(--ink-2);
+  align-items: start;
+}
+.plan li svg { margin-top: 5px; }
+.plan li b { color: var(--ink); font-weight: 600; }
+.plan .btn { justify-content: center; }
+.price-foot {
+  text-align: center;
+  margin-top: 30px;
+  color: var(--ink-3);
+  font-size: 14px;
+}
+.price-foot a { color: var(--brand); text-decoration: none; }
+.price-foot a:hover { text-decoration: underline; }
+
+/* ============================================================
+   WAITLIST
+   ============================================================ */
+.wait {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 0.85fr);
+  gap: 48px;
+  align-items: center;
+}
+.wait h2 { font-size: clamp(26px, 3.2vw, 34px); margin-bottom: 12px; }
+.wait p { color: var(--ink-2); max-width: 28em; }
+.wait-form { display: flex; gap: 9px; flex-wrap: wrap; }
+.wait-form input {
+  flex: 1 1 240px;
+  min-width: 0;
+  font-family: var(--fb);
+  font-size: 15.5px;
+  color: var(--ink);
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+  padding: 11px 14px;
+}
+.wait-form input::placeholder { color: var(--ink-3); }
+.wait-form input:focus-visible { border-color: var(--brand); outline-offset: 1px; }
+.wait-note {
+  margin-top: 11px;
+  color: var(--ink-3);
+  font-size: 12.5px;
+}
+.wait-ok {
+  display: none;
+  align-items: center;
+  gap: 9px;
+  color: var(--ok);
+  font-family: var(--fm);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 13px 0;
+}
+.wait-ok.on { display: flex; }
+
+/* ============================================================
+   FOOTER
+   ============================================================ */
+.foot-in {
+  padding-block: 56px 32px;
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) repeat(4, minmax(0, 1fr));
+  gap: 36px;
+}
+.foot-brand .brand-logo { height: 30px; }
+.foot-brand p {
+  color: var(--ink-3);
+  font-size: 14.5px;
+  max-width: 26em;
+  margin-top: 14px;
+}
+.foot-col h4 {
+  font-family: var(--fm);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-bottom: 14px;
+}
+.foot-col ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 9px; }
+.foot-col a {
+  color: var(--ink-2);
+  text-decoration: none;
+  font-size: 14.5px;
+}
+.foot-col a:hover { color: var(--ink); }
+.foot-bar {
+  border-top: 1px solid var(--line-soft);
+  padding-block: 20px 34px;
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  flex-wrap: wrap;
+  color: var(--ink-3);
+  font-size: 13px;
+}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width: 1000px) {
+  .hero-in, .priv, .recap, .wait, .feat-grid { grid-template-columns: minmax(0, 1fr); gap: 40px; }
+  .recap { gap: 32px; }
+  .signals, .react, .react-notes, .plans { grid-template-columns: minmax(0, 1fr); }
+  .signals { border-radius: var(--r-lg); }
+  .shead { grid-template-columns: minmax(0, 1fr); gap: 16px; margin-bottom: 36px; }
+  .shead-label { border-top: 0; padding-top: 0; }
+  .step { grid-template-columns: 52px minmax(0, 1fr); gap: 6px 18px; }
+  .step p { grid-column: 2; }
+  .foot-in { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .nav-links { display: none; }
+  .band-in { padding-block: 68px; }
+  .recap { grid-template-columns: minmax(0, 1fr); }
+  .card-recap { max-width: 380px; }
+}
+@media (max-width: 620px) {
+  body { font-size: 16px; }
+  .wrap, .nav-in { padding-inline: 20px; }
+  .brand-logo { height: 22px; }
+  .foot-brand .brand-logo { height: 26px; }
+  .demo-bar { flex-wrap: wrap; }
+  .overlay { grid-template-columns: minmax(0, 1fr); left: 10px; right: 10px; bottom: 10px; }
+  .ov { padding: 7px 10px 8px; }
+  .ov-val { font-size: 21px; }
+  #pulse { height: 20px; }
+  .stage { aspect-ratio: 4 / 5; }
+  .foot-in { grid-template-columns: minmax(0, 1fr); gap: 28px; }
+  .emote { width: 46px; height: 46px; padding: 10px; top: 19%; }
+  .pack-row { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+  .pack { height: 98px; gap: 10px; }
+  .pack-disc { width: 42px; height: 42px; padding: 9px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; }
+  .tally-dot { animation: none; opacity: 1; }
+}
+</style>
+</head>
+<body>
+
+<!-- ====================== EMOTE PACK GLYPHS ======================
+     One sprite, referenced by <use> from the hero overlay, the mood
+     cards and the pack picker. Line art rather than native emoji so
+     the faces render identically on every OS and take the palette.
+     ============================================================== -->
+<svg width="0" height="0" style="position:absolute;overflow:hidden" aria-hidden="true" focusable="false">
+  <defs>
+    <symbol id="g-happy" viewBox="0 0 24 24">
+      <g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round">
+        <path d="M7.6 10.4c.7-.9 1.9-.9 2.6 0"/>
+        <path d="M13.8 10.4c.7-.9 1.9-.9 2.6 0"/>
+        <path d="M8.5 13.5c1.9 2.4 5.1 2.4 7 0"/>
+      </g>
+    </symbol>
+
+    <symbol id="g-angry" viewBox="0 0 24 24">
+      <g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round">
+        <path d="M7.2 8.7 10.4 10.1"/>
+        <path d="M16.8 8.7 13.6 10.1"/>
+        <path d="M9 15.9c1.8-2.1 4.2-2.1 6 0"/>
+      </g>
+      <g fill="currentColor">
+        <circle cx="9.5" cy="12.3" r="1"/>
+        <circle cx="14.5" cy="12.3" r="1"/>
+      </g>
+    </symbol>
+
+    <symbol id="g-shocked" viewBox="0 0 24 24">
+      <g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round">
+        <path d="M7.6 8.9c.8-.9 2-.9 2.8 0"/>
+        <path d="M13.6 8.9c.8-.9 2-.9 2.8 0"/>
+      </g>
+      <g fill="currentColor">
+        <circle cx="9.4" cy="11.7" r="1"/>
+        <circle cx="14.6" cy="11.7" r="1"/>
+        <ellipse cx="12" cy="15.9" rx="1.6" ry="2.1"/>
+      </g>
+    </symbol>
+
+    <symbol id="g-laughing" viewBox="0 0 24 24">
+      <g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M7.7 11 9.1 9.6l1.4 1.4"/>
+        <path d="M13.5 11l1.4-1.4 1.4 1.4"/>
+      </g>
+      <path fill="currentColor" d="M7.8 13.4h8.4a4.2 4.2 0 0 1-8.4 0z"/>
+    </symbol>
+
+    <symbol id="g-sad" viewBox="0 0 24 24">
+      <g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round">
+        <path d="M7.4 9.5 10.5 8.6"/>
+        <path d="M16.6 9.5 13.5 8.6"/>
+        <path d="M9 16.1c1.8-2.1 4.2-2.1 6 0"/>
+      </g>
+      <g fill="currentColor">
+        <circle cx="9.6" cy="11.9" r="1"/>
+        <circle cx="14.4" cy="11.9" r="1"/>
+      </g>
+    </symbol>
+  </defs>
+</svg>
+
+<!-- ============================ NAV ============================ -->
+<nav class="nav">
+  <div class="nav-in">
+    <a class="brand" href="#top" aria-label="StreamEmote — home">
+      <img class="brand-logo brand-logo-dark" alt="StreamEmote"
+           width="232" height="63" src="data:image/png;base64,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">
+      <img class="brand-logo brand-logo-light" alt="StreamEmote"
+           width="232" height="63" src="data:image/png;base64,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">
+    </a>
+    <div class="nav-links">
+      <a href="#signals">Signals</a>
+      <a href="#privacy">Privacy</a>
+      <a href="#reactions">Reactions</a>
+      <a href="#pricing">Pricing</a>
+    </div>
+    <a class="btn btn-primary btn-sm" href="#pricing">Download plugin</a>
+  </div>
+</nav>
+
+<!-- ============================ HERO ============================ -->
+<header id="top" class="hero">
+  <div class="wrap hero-in">
+    <div>
+      <div class="eyebrow mono"><span class="eyebrow-dot"></span>OBS plugin · camera only</div>
+      <h1>Your body is part of the <em>stream.</em></h1>
+      <p class="hero-sub">
+        StreamEmote reads your heart rate, breathing and stress from the webcam
+        you already own — and puts them on screen in real time. No chest strap,
+        no smartwatch, no second device.
+      </p>
+      <div class="hero-cta">
+        <a class="btn btn-primary" href="#pricing">
+          Download for OBS
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <path d="M8 2.5v8m0 0L4.8 7.3M8 10.5l3.2-3.2M2.5 13.5h11" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+          </svg>
+        </a>
+        <a class="btn btn-ghost" href="#reactions">Watch the overlay work</a>
+      </div>
+      <div class="hero-facts mono">
+        <span>
+          <svg width="13" height="13" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <path d="M8 1.8 3 3.7v4.1c0 3 2.1 5.4 5 6.4 2.9-1 5-3.4 5-6.4V3.7L8 1.8Z" stroke="var(--ok)" stroke-width="1.4"/>
+            <path d="M5.9 8.1 7.4 9.6l2.8-3" stroke="var(--ok)" stroke-width="1.4" stroke-linecap="round"/>
+          </svg>
+          Processed on your machine
+        </span>
+        <span>
+          <svg width="13" height="13" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <rect x="2" y="3.2" width="12" height="8" rx="1.4" stroke="var(--ink-3)" stroke-width="1.4"/>
+            <path d="M5.5 13.5h5" stroke="var(--ink-3)" stroke-width="1.4" stroke-linecap="round"/>
+          </svg>
+          Windows · macOS · Linux
+        </span>
+        <span>
+          <svg width="13" height="13" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <circle cx="8" cy="8" r="6.2" stroke="var(--ink-3)" stroke-width="1.4"/>
+            <path d="M8 4.6V8l2.4 1.6" stroke="var(--ink-3)" stroke-width="1.4" stroke-linecap="round"/>
+          </svg>
+          Live in under a minute
+        </span>
+      </div>
+    </div>
+
+    <!-- ---------- live demo ---------- -->
+    <div class="demo">
+      <div class="demo-bar">
+        <span class="demo-bar-title mono">Scene 1 — Gameplay</span>
+        <div class="scenes" role="group" aria-label="Preview a stream moment">
+          <button class="scene-btn" type="button" data-scene="calm" aria-pressed="false">Calm</button>
+          <button class="scene-btn" type="button" data-scene="clutch" aria-pressed="true">Clutch</button>
+          <button class="scene-btn" type="button" data-scene="rage" aria-pressed="false">Rage</button>
+        </div>
+      </div>
+
+      <div class="stage">
+        <div class="tint tint-calm" id="tint-calm"></div>
+        <div class="tint tint-clutch" id="tint-clutch"></div>
+        <div class="tint tint-rage" id="tint-rage"></div>
+
+        <svg class="subject" viewBox="0 0 200 210" fill="none" aria-hidden="true">
+          <path d="M14 210c0-38 30-58 86-58s86 20 86 58" fill="rgba(237,234,246,.07)"/>
+          <ellipse cx="100" cy="86" rx="49" ry="58" fill="rgba(237,234,246,.10)" stroke="rgba(237,234,246,.15)" stroke-width="1.2"/>
+          <path d="M51 80c0-14 22-24 49-24s49 10 49 24" stroke="rgba(237,234,246,.09)" stroke-width="2"/>
+
+          <!-- rPPG sampling window, in the subject's own coordinates so it
+               stays on the forehead at every stage size -->
+          <g stroke="var(--breath)" stroke-width="1.8" opacity=".9">
+            <path d="M68 54V42h12M120 42h12v12M132 66v12h-12M80 78H68V66"/>
+          </g>
+          <path d="M100 56v8M96 60h8" stroke="var(--breath)" stroke-width="1.3" opacity=".55"/>
+          <text class="roi-txt" x="68" y="35" fill="var(--breath)">ROI · SKIN</text>
+        </svg>
+
+        <span class="tally"><span class="tally-dot"></span>Live</span>
+        <span class="mode-chip" id="modeChip">Mode_ANGRY · filter on</span>
+        <span class="emote disc p-shocked" id="emote" aria-hidden="true">
+          <svg class="glyph" viewBox="0 0 24 24"><use id="emoteUse" href="#g-shocked"/></svg>
+        </span>
+
+        <div class="overlay">
+          <div class="ov">
+            <div class="ov-top">
+              <span class="ov-dot" style="background: var(--hr)"></span>
+              <span class="ov-name">Heart rate</span>
+              <svg class="heart" id="heart" width="9" height="9" viewBox="0 0 16 16" aria-hidden="true">
+                <path d="M8 14S1.6 9.9 1.6 5.9A3.6 3.6 0 0 1 8 3.7a3.6 3.6 0 0 1 6.4 2.2C14.4 9.9 8 14 8 14Z" fill="#FF5470"/>
+              </svg>
+            </div>
+            <div class="ov-val tnum"><span id="hrVal">126</span><span class="ov-unit">bpm</span></div>
+            <canvas id="pulse" aria-hidden="true"></canvas>
+          </div>
+          <div class="ov">
+            <div class="ov-top">
+              <span class="ov-dot" style="background: var(--breath)"></span>
+              <span class="ov-name">Breathing</span>
+            </div>
+            <div class="ov-val tnum"><span id="brVal">21</span><span class="ov-unit">breath/min</span></div>
+            <canvas id="breathWave" aria-hidden="true" style="display:block;width:100%;height:26px;margin-top:4px"></canvas>
+          </div>
+          <div class="ov">
+            <div class="ov-top">
+              <span class="ov-dot" id="stressDot" style="background: var(--warn)"></span>
+              <span class="ov-name">Stress</span>
+            </div>
+            <div class="ov-state" id="stressVal" style="color: var(--warn)">Moderate</div>
+            <div class="ov-unit tnum" style="margin-top:7px">HRV <span id="hrvVal">41</span> MS</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="demo-foot">
+        <span class="conf" id="conf">
+          <span class="conf-bars" id="confBars" aria-hidden="true"><i></i><i></i><i></i></span>
+          <span id="confText">Signal good</span>
+        </span>
+        <span class="demo-foot-note">Live preview — switch moments above to see the overlay react.</span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ============================ TRUST ============================ -->
+<section class="band band-alt">
+  <div class="wrap trust-in">
+    <span class="trust-label mono">Drops into</span>
+    <div class="trust-list">
+      <span>
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="none" aria-hidden="true"><circle cx="8" cy="8" r="6.4" stroke="var(--ink-3)" stroke-width="1.5"/><circle cx="8" cy="8" r="2" fill="var(--ink-3)"/></svg>
+        OBS Studio 30+
+      </span>
+      <span>
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="none" aria-hidden="true"><rect x="2" y="2.6" width="12" height="10.8" rx="1.6" stroke="var(--ink-3)" stroke-width="1.5"/><path d="M6.4 6.2v4l3.6-2-3.6-2Z" fill="var(--ink-3)"/></svg>
+        Streamlabs
+      </span>
+      <span>Twitch</span>
+      <span>YouTube Live</span>
+      <span>Kick</span>
+      <span>
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M8 1.8 3 3.7v4.1c0 3 2.1 5.4 5 6.4 2.9-1 5-3.4 5-6.4V3.7L8 1.8Z" stroke="var(--ok)" stroke-width="1.5"/></svg>
+        Any USB webcam
+      </span>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ SIGNALS ============================ -->
+<section class="band" id="signals">
+  <div class="wrap band-in">
+    <div class="shead">
+      <span class="shead-label mono">Signals</span>
+      <div class="shead-body">
+        <h2>Three vitals, zero hardware.</h2>
+        <p>
+          Your camera already sees more than you think. Skin brightens and dims
+          with every heartbeat — too faintly for you to notice, plenty for a
+          30&nbsp;fps sensor.
+        </p>
+      </div>
+    </div>
+
+    <div class="signals">
+      <div class="sig">
+        <div class="sig-head">
+          <span class="sig-name">Heart rate</span>
+          <span class="sig-rate" style="color: var(--hr)">Every 1s</span>
+        </div>
+        <p>
+          Remote photoplethysmography tracks blood volume in your face frame by
+          frame. Same principle as the pulse oximeter on your fingertip — just
+          done with light your webcam already collects.
+        </p>
+        <div class="sig-spec">
+          <div class="sig-spec-row"><span class="sig-spec-k">Accuracy</span><span class="sig-spec-v tnum">±3 bpm</span></div>
+          <div class="sig-spec-row"><span class="sig-spec-k">Band</span><span class="sig-spec-v tnum">0.7–4.0 Hz</span></div>
+          <div class="sig-spec-row"><span class="sig-spec-k">Region</span><span class="sig-spec-v">Forehead + cheeks</span></div>
+        </div>
+      </div>
+
+      <div class="sig">
+        <div class="sig-head">
+          <span class="sig-name">Breathing rate</span>
+          <span class="sig-rate" style="color: var(--breath)">Every 2s</span>
+        </div>
+        <p>
+          Chest rise and the micro-movements around your nose and shoulders,
+          measured against a stable background. No strap, no mic, no
+          calibration breath to hold.
+        </p>
+        <div class="sig-spec">
+          <div class="sig-spec-row"><span class="sig-spec-k">Range</span><span class="sig-spec-v tnum">6–40 br/min</span></div>
+          <div class="sig-spec-row"><span class="sig-spec-k">Window</span><span class="sig-spec-v tnum">20 s rolling</span></div>
+          <div class="sig-spec-row"><span class="sig-spec-k">Needs</span><span class="sig-spec-v">Head in frame</span></div>
+        </div>
+      </div>
+
+      <div class="sig">
+        <div class="sig-head">
+          <span class="sig-name">Stress</span>
+          <span class="sig-rate" style="color: var(--warn)">Every 5s</span>
+        </div>
+        <p>
+          Derived from heart rate variability — the gap between beats, which
+          shortens and steadies when you're under load. Reported as Low,
+          Moderate or High, with the raw RMSSD if you want it.
+        </p>
+        <div class="sig-spec">
+          <div class="sig-spec-row"><span class="sig-spec-k">Metric</span><span class="sig-spec-v">RMSSD (ms)</span></div>
+          <div class="sig-spec-row"><span class="sig-spec-k">Baseline</span><span class="sig-spec-v">First 60 s</span></div>
+          <div class="sig-spec-row"><span class="sig-spec-k">States</span><span class="sig-spec-v">Low / Mod / High</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ PRIVACY ============================ -->
+<section class="band band-alt" id="privacy">
+  <div class="wrap band-in">
+    <div class="priv">
+      <div>
+        <span class="shead-label mono" style="display:inline-block;border:0;padding:0;margin-bottom:18px">Privacy</span>
+        <h2>Your face never leaves the room.</h2>
+        <p class="priv-lede">
+          A plugin that reads your pulse off your face should have to explain
+          itself. So: every frame is analysed on your own CPU, in the same
+          process as OBS, and then discarded. There is no upload step to
+          opt out of, because there is no upload.
+        </p>
+        <div class="priv-points">
+          <div class="priv-point">
+            <svg width="18" height="18" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+              <rect x="2.6" y="7" width="10.8" height="7" rx="1.5" stroke="var(--ok)" stroke-width="1.5"/>
+              <path d="M5.4 7V5.2a2.6 2.6 0 0 1 5.2 0V7" stroke="var(--ok)" stroke-width="1.5"/>
+            </svg>
+            <div>
+              <b>No video, ever</b>
+              <span>Frames are read from memory and dropped. Nothing is written to disk or sent anywhere.</span>
+            </div>
+          </div>
+          <div class="priv-point">
+            <svg width="18" height="18" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+              <path d="M2 8h3l1.6-3.4L9 11.4l1.7-3.4H14" stroke="var(--breath)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <div>
+              <b>Only numbers reach the overlay</b>
+              <span>Three integers and a confidence flag. That's the entire payload crossing into your scene.</span>
+            </div>
+          </div>
+          <div class="priv-point">
+            <svg width="18" height="18" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+              <circle cx="8" cy="8" r="6.2" stroke="var(--ink-3)" stroke-width="1.5"/>
+              <path d="M8 5v6M5 8h6" stroke="var(--ink-3)" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+            <div>
+              <b>Works with the network off</b>
+              <span>Pull your ethernet cable mid-stream and the vitals keep reading. Try it — it's the cleanest proof we can offer.</span>
+            </div>
+          </div>
+          <div class="priv-point">
+            <svg width="18" height="18" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+              <path d="M3 3h10v10H3z" stroke="var(--brand)" stroke-width="1.5"/>
+              <path d="M5.6 6.4h4.8M5.6 9.6h3.2" stroke="var(--brand)" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+            <div>
+              <b>Readable source for the capture path</b>
+              <span>The camera and signal-processing modules are public. Audit them before you trust them.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="pipe">
+        <div class="pipe-title mono">Signal path</div>
+        <div class="pipe-flow">
+          <div class="pipe-node">
+            <span class="pipe-num">01</span>
+            <div><strong>Webcam frame</strong><em>1080p · 30 fps · in memory</em></div>
+          </div>
+          <div class="pipe-rail"></div>
+          <div class="pipe-node">
+            <span class="pipe-num">02</span>
+            <div><strong>Skin region isolated</strong><em>Forehead + cheek ROI</em></div>
+          </div>
+          <div class="pipe-rail"></div>
+          <div class="pipe-node">
+            <span class="pipe-num">03</span>
+            <div><strong>Band-pass filter</strong><em>0.7–4.0 Hz · pulse only</em></div>
+          </div>
+          <div class="pipe-rail"></div>
+          <div class="pipe-node">
+            <span class="pipe-num">04</span>
+            <div><strong>Frame discarded</strong><em>Nothing retained</em></div>
+          </div>
+          <div class="pipe-rail"></div>
+          <div class="pipe-node">
+            <span class="pipe-num">05</span>
+            <div><strong>Overlay updated</strong><em>bpm · br/min · state</em></div>
+          </div>
+        </div>
+        <div class="pipe-cut">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <path d="M8 1.8 3 3.7v4.1c0 3 2.1 5.4 5 6.4 2.9-1 5-3.4 5-6.4V3.7L8 1.8Z" stroke="var(--ok)" stroke-width="1.4"/>
+            <path d="M5.9 8.1 7.4 9.6l2.8-3" stroke="var(--ok)" stroke-width="1.4" stroke-linecap="round"/>
+          </svg>
+          <span><b>Steps 1–4 never leave your machine.</b> Step 5 is a number on your own screen.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ STEPS ============================ -->
+<section class="band">
+  <div class="wrap band-in">
+    <div class="shead">
+      <span class="shead-label mono">Setup</span>
+      <div class="shead-body">
+        <h2>Four steps, one stream to spare.</h2>
+        <p>No calibration routine, no warm-up window, no baseline session before you can go live.</p>
+      </div>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <span class="step-n">Step 01</span>
+        <h3>Install the plugin</h3>
+        <p>One installer for Windows, macOS and Linux. It registers itself as an OBS source — no manual folder surgery.</p>
+      </div>
+      <div class="step">
+        <span class="step-n">Step 02</span>
+        <h3>Point your webcam</h3>
+        <p>Any camera OBS can already see. StreamEmote reads the same feed your viewers do, so there's no second device to frame.</p>
+      </div>
+      <div class="step">
+        <span class="step-n">Step 03</span>
+        <h3>Pick an overlay</h3>
+        <p>Minimal badge, full dashboard, or a single number. Drag to position, set your colours, save it to the scene.</p>
+      </div>
+      <div class="step">
+        <span class="step-n">Step 04</span>
+        <h3>Go live</h3>
+        <p>Vitals appear within about ten seconds of your face entering frame, and stay there.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ REACTIONS ============================ -->
+<section class="band band-alt" id="reactions">
+  <div class="wrap band-in">
+    <div class="shead">
+      <span class="shead-label mono">Reactions</span>
+      <div class="shead-body">
+        <h2>When you snap, the stream feels it.</h2>
+        <p>
+          StreamEmote watches your expression and your pulse together. An emote
+          only fires when both agree — so the rage is real rage, not a
+          well-timed eyebrow.
+        </p>
+      </div>
+    </div>
+
+    <div class="react">
+      <div class="mood mood-calm">
+        <div class="mood-strip">
+          <span class="mood-tag">Mode_CALM</span>
+          <span class="mood-emote disc p-happy">
+            <svg class="glyph" viewBox="0 0 24 24"><use href="#g-happy"/></svg>
+          </span>
+        </div>
+        <div class="mood-body">
+          <h3>Calm</h3>
+          <p>A cool aura settles in as your breathing slows. Useful when you're actually trying to show your audience what calm looks like.</p>
+          <div class="mood-vitals">
+            <span style="color: var(--hr)">68 BPM</span>
+            <span style="color: var(--breath)">12 BR/MIN</span>
+            <span style="color: var(--ok)">LOW</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="mood mood-clutch">
+        <div class="mood-strip">
+          <span class="mood-tag">Mode_CLUTCH</span>
+          <span class="mood-emote disc p-shocked">
+            <svg class="glyph" viewBox="0 0 24 24"><use href="#g-shocked"/></svg>
+          </span>
+        </div>
+        <div class="mood-body">
+          <h3>Clutch</h3>
+          <p>Heart climbing, breath tightening, stress stepping to Moderate. Chat can see the 1v5 landing before you say a word.</p>
+          <div class="mood-vitals">
+            <span style="color: var(--hr)">126 BPM</span>
+            <span style="color: var(--breath)">21 BR/MIN</span>
+            <span style="color: var(--warn)">MODERATE</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="mood mood-rage">
+        <div class="mood-strip">
+          <span class="mood-tag">Mode_RAGE</span>
+          <span class="mood-emote disc p-angry">
+            <svg class="glyph" viewBox="0 0 24 24"><use href="#g-angry"/></svg>
+          </span>
+        </div>
+        <div class="mood-body">
+          <h3>Rage</h3>
+          <p>Peak heart rate plus a rage face triggers the tint and the emote burst together. Movement also drops signal quality — and the overlay says so.</p>
+          <div class="mood-vitals">
+            <span style="color: var(--hr)">151 BPM</span>
+            <span style="color: var(--breath)">27 BR/MIN</span>
+            <span style="color: var(--crit)">HIGH</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="packs">
+      <div class="packs-head">
+        <span class="mono">Pick your pack</span>
+        <span>Five characters per pack, one tap to swap the whole set.</span>
+      </div>
+      <div class="pack-row" role="radiogroup" aria-label="Emote pack character">
+        <button class="pack" type="button" role="radio" aria-checked="false" data-pack="happy">
+          <span class="pack-disc disc p-happy" aria-hidden="true">
+            <svg class="glyph" viewBox="0 0 24 24"><use href="#g-happy"/></svg>
+          </span>
+          <span class="pack-name">Happy</span>
+        </button>
+        <button class="pack" type="button" role="radio" aria-checked="false" data-pack="angry">
+          <span class="pack-disc disc p-angry" aria-hidden="true">
+            <svg class="glyph" viewBox="0 0 24 24"><use href="#g-angry"/></svg>
+          </span>
+          <span class="pack-name">Angry</span>
+        </button>
+        <button class="pack" type="button" role="radio" aria-checked="true" data-pack="shocked">
+          <span class="pack-disc disc p-shocked" aria-hidden="true">
+            <svg class="glyph" viewBox="0 0 24 24"><use href="#g-shocked"/></svg>
+          </span>
+          <span class="pack-name">Shocked</span>
+        </button>
+        <button class="pack" type="button" role="radio" aria-checked="false" data-pack="laughing">
+          <span class="pack-disc disc p-laughing" aria-hidden="true">
+            <svg class="glyph" viewBox="0 0 24 24"><use href="#g-laughing"/></svg>
+          </span>
+          <span class="pack-name">Laughing</span>
+        </button>
+        <button class="pack" type="button" role="radio" aria-checked="false" data-pack="sad">
+          <span class="pack-disc disc p-sad" aria-hidden="true">
+            <svg class="glyph" viewBox="0 0 24 24"><use href="#g-sad"/></svg>
+          </span>
+          <span class="pack-name">Sad</span>
+        </button>
+      </div>
+      <p class="packs-note">New packs drop monthly and your position and cooldowns carry over. <a href="#top">Browse packs</a></p>
+    </div>
+
+    <div class="react-notes">
+      <div class="react-note">
+        <b>Triggered by you, not clicked</b>
+        <span>Reactions fade in from your live state. Bind any one to a hotkey if you'd rather cue it yourself.</span>
+      </div>
+      <div class="react-note">
+        <b>Cooldowns built in</b>
+        <span>Set a floor between fires so a tense hour doesn't turn into an emote strobe.</span>
+      </div>
+      <div class="react-note">
+        <b>Two ways to render</b>
+        <span>A light overlay layer over your cam, or a full face warp through StreamEmote's virtual camera. Overlay filters on every plan; face warp on Partner.</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ FEATURES ============================ -->
+<section class="band">
+  <div class="wrap band-in">
+    <div class="shead">
+      <span class="shead-label mono">On stream</span>
+      <div class="shead-body">
+        <h2>More than a number in the corner.</h2>
+        <p>Once your vitals are a live signal, the rest of your scene can listen to them.</p>
+      </div>
+    </div>
+
+    <div class="feat-grid">
+      <div class="feat-list">
+        <div class="feat">
+          <svg width="18" height="18" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <path d="M9 1.6 3.4 9.2H7.4L6.6 14.4 12.6 6.4H8.6L9 1.6Z" stroke="var(--warn)" stroke-width="1.5" stroke-linejoin="round"/>
+          </svg>
+          <div>
+            <b>Clutch alerts</b>
+            <span>Cross a heart-rate threshold and fire a screen shake, a sound, or a lower-third banner. The moment announces itself.</span>
+          </div>
+        </div>
+        <div class="feat">
+          <svg width="18" height="18" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <rect x="2" y="3.4" width="12" height="9.2" rx="1.5" stroke="var(--brand)" stroke-width="1.5"/>
+            <path d="M6.4 6.6v3.4l3.2-1.7-3.2-1.7Z" fill="var(--brand)"/>
+          </svg>
+          <div>
+            <b>Auto-highlight clips</b>
+            <span>Every heart-rate spike gets timestamped and clipped. Your VOD editor opens to a list instead of six hours of footage.</span>
+          </div>
+        </div>
+        <div class="feat">
+          <svg width="18" height="18" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <path d="M8 13.6S2.2 9.8 2.2 6.2A3.3 3.3 0 0 1 8 4.1a3.3 3.3 0 0 1 5.8 2.1c0 3.6-5.8 7.4-5.8 7.4Z" stroke="var(--hr)" stroke-width="1.5"/>
+          </svg>
+          <div>
+            <b>Heart-rate donations</b>
+            <span>Viewers tip to set a challenge — hit 150 bpm, or hold Low stress for five minutes — and watch your vitals answer.</span>
+          </div>
+        </div>
+        <div class="feat">
+          <svg width="18" height="18" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <path d="M2.4 12.6 6 5.4l3 4.4 1.6-2.6 3 5.4H2.4Z" stroke="var(--breath)" stroke-width="1.5" stroke-linejoin="round"/>
+          </svg>
+          <div>
+            <b>Merged co-stream vitals</b>
+            <span>Run a duo or a squad and put everyone's heart rate in one panel. The spike that matters is usually someone else's.</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout">
+        <span class="mono">Honest by default</span>
+        <h3>When the signal is bad, we say so.</h3>
+        <p>
+          Dim lighting, a turned head, a lean out of frame — rPPG degrades, and
+          a plugin that kept printing a confident 72 would be lying to your
+          chat. StreamEmote shows its confidence instead, and drops the number
+          rather than invent one.
+        </p>
+        <div class="callout-demo">
+          <div class="callout-row" style="color: var(--ok)">
+            <span class="conf-bars" aria-hidden="true"><i style="background:var(--ok)"></i><i style="background:var(--ok)"></i><i style="background:var(--ok)"></i></span>
+            Good · face centred
+            <span class="tnum">126</span>
+          </div>
+          <div class="callout-row" style="color: var(--warn)">
+            <span class="conf-bars" aria-hidden="true"><i style="background:var(--warn)"></i><i style="background:var(--warn)"></i><i></i></span>
+            Fair · low light
+            <span class="tnum">124</span>
+          </div>
+          <div class="callout-row" style="color: var(--ink-3)">
+            <span class="conf-bars" aria-hidden="true"><i style="background:var(--crit)"></i><i></i><i></i></span>
+            Weak · out of frame
+            <span class="tnum">— —</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ RECAP ============================ -->
+<section class="band band-alt">
+  <div class="wrap band-in-tight">
+    <div class="recap">
+      <div>
+        <span class="shead-label mono" style="display:inline-block;border:0;padding:0;margin-bottom:16px">After the stream</span>
+        <h2>Every session ends with a stat card.</h2>
+        <p>
+          Peak heart rate, average stress, your calmest minute and your biggest
+          spike — with the clip attached. One tap posts it to X or Discord while
+          chat is still in the mood to argue about it.
+        </p>
+      </div>
+      <div class="card-recap">
+        <div class="card-recap-h mono">Session recap · 4h 12m</div>
+        <div class="card-recap-b">
+          <div class="rrow">
+            <span class="rrow-k">Peak HR</span>
+            <span class="rrow-v tnum" style="color: var(--hr)">152<small>BPM</small></span>
+          </div>
+          <div class="rrow">
+            <span class="rrow-k">Avg stress</span>
+            <span class="pill" style="background: var(--warn-soft); color: var(--warn)">Moderate</span>
+          </div>
+          <div class="rrow">
+            <span class="rrow-k">Calmest moment</span>
+            <span class="rrow-v tnum">14:32</span>
+          </div>
+          <div class="rrow" style="border-bottom:0">
+            <span class="rrow-k">Biggest spike</span>
+            <span class="rrow-v tnum">+48<small>BPM</small></span>
+          </div>
+          <button class="btn btn-ghost" type="button">Share recap</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ PRICING ============================ -->
+<section class="band" id="pricing">
+  <div class="wrap band-in">
+    <div class="price-head">
+      <span class="mono" style="color: var(--ink-3)">Pricing</span>
+      <h2 style="margin-top:14px">Start free. Pay when it's part of the show.</h2>
+      <p>No card to begin. Cancel any time, keep the overlay you built.</p>
+      <div class="toggle" role="group" aria-label="Billing period">
+        <button type="button" id="tMonthly" aria-pressed="true">Monthly</button>
+        <button type="button" id="tAnnual" aria-pressed="false">Annual <span class="save">−17%</span></button>
+      </div>
+    </div>
+
+    <div class="plans">
+      <div class="plan">
+        <div class="plan-name"><h3>Free</h3></div>
+        <span class="plan-for">For your next stream, to see if it holds up</span>
+        <div class="plan-cost">
+          <span class="plan-amt tnum">$0</span>
+          <span class="plan-per">forever</span>
+        </div>
+        <span class="plan-bill" id="bill-free">No account needed</span>
+        <span class="plan-inherit">What you get</span>
+        <ul>
+          <li><svg width="13" height="13" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3.4 8.4 6.4 11.4l6.2-6.8" stroke="var(--ink-3)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span><b>Heart rate</b> overlay, updated every 3 s</span></li>
+          <li><svg width="13" height="13" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3.4 8.4 6.4 11.4l6.2-6.8" stroke="var(--ink-3)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span>One overlay style, drag to position</span></li>
+          <li><svg width="13" height="13" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3.4 8.4 6.4 11.4l6.2-6.8" stroke="var(--ink-3)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span>±3 bpm accuracy indicator</span></li>
+          <li><svg width="13" height="13" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3.4 8.4 6.4 11.4l6.2-6.8" stroke="var(--ink-3)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Small StreamEmote watermark</span></li>
+        </ul>
+        <a class="btn btn-ghost" href="#top">Download free</a>
+      </div>
+
+      <div class="plan plan-pro">
+        <span class="plan-flag">Most streamers</span>
+        <div class="plan-name"><h3>Pro</h3></div>
+        <span class="plan-for">For anyone going live most weeks</span>
+        <div class="plan-cost">
+          <span class="plan-amt tnum" id="amt-pro">$9</span>
+          <span class="plan-per" id="per-pro">/ month</span>
+        </div>
+        <span class="plan-bill" id="bill-pro">Billed monthly</span>
+        <span class="plan-inherit">Everything in Free, plus</span>
+        <ul>
+          <li><svg width="13" height="13" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3.4 8.4 6.4 11.4l6.2-6.8" stroke="var(--brand)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span><b>All three vitals</b> at 1-second resolution</span></li>
+          <li><svg width="13" height="13" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3.4 8.4 6.4 11.4l6.2-6.8" stroke="var(--brand)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span><b>Mood reactions</b> and overlay face filters</span></li>
+          <li><svg width="13" height="13" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3.4 8.4 6.4 11.4l6.2-6.8" stroke="var(--brand)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span><b>Clutch alerts</b> — shake, sound or banner</span></li>
+          <li><svg width="13" height="13" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3.4 8.4 6.4 11.4l6.2-6.8" stroke="var(--brand)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Every overlay style, no watermark</span></li>
+          <li><svg width="13" height="13" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3.4 8.4 6.4 11.4l6.2-6.8" stroke="var(--brand)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Session recap card, 30-day history</span></li>
+        </ul>
+        <a class="btn btn-primary" href="#top">Get Pro</a>
+      </div>
+
+      <div class="plan">
+        <div class="plan-name"><h3>Partner</h3></div>
+        <span class="plan-for">For turning the stream into income</span>
+        <div class="plan-cost">
+          <span class="plan-amt tnum" id="amt-partner">$19</span>
+          <span class="plan-per" id="per-partner">/ month</span>
+        </div>
+        <span class="plan-bill" id="bill-partner">Billed monthly</span>
+        <span class="plan-inherit">Everything in Pro, plus</span>
+        <ul>
+          <li><svg width="13" height="13" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3.4 8.4 6.4 11.4l6.2-6.8" stroke="var(--ink-3)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span><b>Heart-rate donations</b> and challenge leaderboard</span></li>
+          <li><svg width="13" height="13" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3.4 8.4 6.4 11.4l6.2-6.8" stroke="var(--ink-3)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span><b>Full face-warp filters</b> via virtual camera</span></li>
+          <li><svg width="13" height="13" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3.4 8.4 6.4 11.4l6.2-6.8" stroke="var(--ink-3)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Auto-highlight clipping and merged co-stream vitals</span></li>
+          <li><svg width="13" height="13" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3.4 8.4 6.4 11.4l6.2-6.8" stroke="var(--ink-3)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Overlay API for bots and extensions</span></li>
+          <li><svg width="13" height="13" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3.4 8.4 6.4 11.4l6.2-6.8" stroke="var(--ink-3)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Unlimited history, CSV export, 24 h support</span></li>
+        </ul>
+        <a class="btn btn-ghost" href="#top">Get Partner</a>
+      </div>
+    </div>
+
+    <p class="price-foot">
+      Every plan processes locally — your camera feed never leaves your machine.
+      Questions? <a href="#top">hello@streamemote.io</a>
+    </p>
+  </div>
+</section>
+
+<!-- ============================ WAITLIST ============================ -->
+<section class="band band-alt">
+  <div class="wrap band-in-tight">
+    <div class="wait">
+      <div>
+        <h2>New packs, first look.</h2>
+        <p>Emote packs and face filters drop monthly. One email when they land — nothing else, and no digest you have to unsubscribe from twice.</p>
+      </div>
+      <div>
+        <form class="wait-form" id="waitForm" novalidate>
+          <label class="mono" for="waitEmail" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">Email address</label>
+          <input id="waitEmail" type="email" placeholder="you@example.com" autocomplete="email" required>
+          <button class="btn btn-primary" type="submit">Notify me</button>
+        </form>
+        <div class="wait-ok" id="waitOk">
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3.4 8.4 6.4 11.4l6.2-6.8" stroke="var(--ok)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          You're on the list
+        </div>
+        <p class="wait-note">Roughly one email a month. Unsubscribe in one click.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ FOOTER ============================ -->
+<footer class="band">
+  <div class="wrap foot-in">
+    <div class="foot-brand">
+      <a class="brand" href="#top" aria-label="StreamEmote — home">
+      <img class="brand-logo brand-logo-dark" alt="StreamEmote"
+           width="232" height="63" src="data:image/png;base64,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">
+      <img class="brand-logo brand-logo-light" alt="StreamEmote"
+           width="232" height="63" src="data:image/png;base64,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">
+    </a>
+      <p>Heart rate, breathing and stress from the webcam you already own — on screen, in OBS, without a wearable.</p>
+    </div>
+    <div class="foot-col">
+      <h4>Product</h4>
+      <ul>
+        <li><a href="#signals">Signals</a></li>
+        <li><a href="#reactions">Reactions</a></li>
+        <li><a href="#pricing">Pricing</a></li>
+        <li><a href="#top">Changelog</a></li>
+      </ul>
+    </div>
+    <div class="foot-col">
+      <h4>Docs</h4>
+      <ul>
+        <li><a href="#top">OBS setup guide</a></li>
+        <li><a href="#top">Overlay gallery</a></li>
+        <li><a href="#top">Accuracy notes</a></li>
+        <li><a href="#top">Overlay API</a></li>
+      </ul>
+    </div>
+    <div class="foot-col">
+      <h4>Company</h4>
+      <ul>
+        <li><a href="#top">About</a></li>
+        <li><a href="#top">Press kit</a></li>
+        <li><a href="#top">Status</a></li>
+        <li><a href="#top">Contact</a></li>
+      </ul>
+    </div>
+    <div class="foot-col">
+      <h4>Legal</h4>
+      <ul>
+        <li><a href="#privacy">Privacy</a></li>
+        <li><a href="#top">Terms</a></li>
+        <li><a href="#top">Data handling</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="wrap foot-bar">
+    <span>© 2026 StreamEmote, Inc.</span>
+    <span>Made for streamers · No data leaves your machine</span>
+  </div>
+</footer>
+
+<script>
+(function () {
+  "use strict";
+
+  var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  /* ---------------------------------------------------------
+     Scenario definitions. Note that rage degrades signal
+     confidence — movement genuinely breaks rPPG, and the
+     overlay is meant to admit that.
+     --------------------------------------------------------- */
+  var SCENES = {
+    calm:   { hr: 68,  br: 12, hrv: 76, stress: "Low",      sColor: "--ok",   conf: "good", glyph: "happy",   mode: "Mode_CALM · filter on",   tint: "calm" },
+    clutch: { hr: 126, br: 21, hrv: 41, stress: "Moderate", sColor: "--warn", conf: "good", glyph: "shocked", mode: "Mode_CLUTCH · filter on", tint: "clutch" },
+    rage:   { hr: 151, br: 27, hrv: 23, stress: "High",     sColor: "--crit", conf: "weak", glyph: "angry",   mode: "Mode_RAGE · filter on",   tint: "rage" }
+  };
+
+  var GLYPHS = ["happy", "angry", "shocked", "laughing", "sad"];
+
+  var CONF = {
+    good: { text: "Signal good", lit: 3, color: "--ok" },
+    weak: { text: "Signal weak · motion", lit: 1, color: "--warn" }
+  };
+
+  var el = {
+    hrVal: document.getElementById("hrVal"),
+    brVal: document.getElementById("brVal"),
+    hrvVal: document.getElementById("hrvVal"),
+    stressVal: document.getElementById("stressVal"),
+    stressDot: document.getElementById("stressDot"),
+    heart: document.getElementById("heart"),
+    emote: document.getElementById("emote"),
+    emoteUse: document.getElementById("emoteUse"),
+    modeChip: document.getElementById("modeChip"),
+    conf: document.getElementById("conf"),
+    confText: document.getElementById("confText"),
+    confBars: document.getElementById("confBars"),
+    pulse: document.getElementById("pulse"),
+    breath: document.getElementById("breathWave")
+  };
+
+  var current = "clutch";
+  var shown = { hr: SCENES.clutch.hr, br: SCENES.clutch.br, hrv: SCENES.clutch.hrv };
+  var target = { hr: SCENES.clutch.hr, br: SCENES.clutch.br, hrv: SCENES.clutch.hrv };
+
+  /* ---------------- scene switching ---------------- */
+  function applyScene(name, animate) {
+    var s = SCENES[name];
+    if (!s) return;
+    current = name;
+
+    target.hr = s.hr;
+    target.br = s.br;
+    target.hrv = s.hrv;
+
+    el.stressVal.textContent = s.stress;
+    el.stressVal.style.color = "var(" + s.sColor + ")";
+    el.stressDot.style.background = "var(" + s.sColor + ")";
+
+    ["calm", "clutch", "rage"].forEach(function (t) {
+      var node = document.getElementById("tint-" + t);
+      if (node) node.classList.toggle("on", t === s.tint);
+    });
+
+    el.modeChip.textContent = s.mode;
+    el.modeChip.classList.add("on");
+
+    var c = CONF[s.conf];
+    el.confText.textContent = c.text;
+    el.conf.style.color = "var(" + c.color + ")";
+    var bars = el.confBars.children;
+    for (var i = 0; i < bars.length; i++) {
+      bars[i].style.background = i < c.lit ? "var(" + c.color + ")" : "var(--line)";
+    }
+
+    setGlyph(s.glyph);
+
+    if (animate && !reduce) {
+      el.emote.classList.remove("pop");
+      void el.emote.offsetWidth;
+      el.emote.classList.add("pop");
+    } else if (reduce) {
+      el.emote.style.opacity = "1";
+      el.emote.style.transform = "scale(1)";
+    }
+
+    if (!animate) {
+      shown.hr = s.hr; shown.br = s.br; shown.hrv = s.hrv;
+      paintValues();
+    }
+  }
+
+  /* Point the overlay emote at one of the sprite glyphs and recolour
+     its disc to match that character. */
+  function setGlyph(name) {
+    if (!el.emoteUse) return;
+    el.emoteUse.setAttribute("href", "#g-" + name);
+    GLYPHS.forEach(function (g) {
+      el.emote.classList.toggle("p-" + g, g === name);
+    });
+  }
+
+  var buttons = document.querySelectorAll(".scene-btn");
+  Array.prototype.forEach.call(buttons, function (b) {
+    b.addEventListener("click", function () {
+      Array.prototype.forEach.call(buttons, function (o) {
+        o.setAttribute("aria-pressed", String(o === b));
+      });
+      applyScene(b.getAttribute("data-scene"), true);
+    });
+  });
+
+  /* ---------------- emote pack picker ----------------
+     Picking a character previews it in the hero overlay, so the two
+     halves of the page are actually wired to each other. */
+  var packs = Array.prototype.slice.call(document.querySelectorAll(".pack"));
+
+  function selectPack(btn, focus) {
+    packs.forEach(function (p) {
+      p.setAttribute("aria-checked", String(p === btn));
+      p.tabIndex = p === btn ? 0 : -1;
+    });
+    if (focus) btn.focus();
+
+    setGlyph(btn.getAttribute("data-pack"));
+    if (!reduce) {
+      el.emote.classList.remove("pop");
+      void el.emote.offsetWidth;
+      el.emote.classList.add("pop");
+    }
+  }
+
+  packs.forEach(function (btn, i) {
+    btn.tabIndex = btn.getAttribute("aria-checked") === "true" ? 0 : -1;
+    btn.addEventListener("click", function () { selectPack(btn, false); });
+    btn.addEventListener("keydown", function (e) {
+      var d = 0;
+      if (e.key === "ArrowRight" || e.key === "ArrowDown") d = 1;
+      else if (e.key === "ArrowLeft" || e.key === "ArrowUp") d = -1;
+      if (!d) return;
+      e.preventDefault();
+      selectPack(packs[(i + d + packs.length) % packs.length], true);
+    });
+  });
+
+  function paintValues() {
+    el.hrVal.textContent = Math.round(shown.hr);
+    el.brVal.textContent = Math.round(shown.br);
+    el.hrvVal.textContent = Math.round(shown.hrv);
+  }
+
+  /* ---------------- canvas setup ----------------
+     Measure only when the box actually changes; resizing a canvas
+     every frame clears it and costs a layout for nothing. */
+  var metrics = new WeakMap();
+
+  function fit(canvas) {
+    if (!canvas) return null;
+    var dpr = window.devicePixelRatio || 1;
+    var r = canvas.getBoundingClientRect();
+    var w = Math.max(40, Math.round(r.width));
+    var h = Math.max(14, Math.round(r.height));
+    var m = metrics.get(canvas);
+    if (m && m.w === w && m.h === h && m.dpr === dpr) return m;
+
+    canvas.width = Math.round(w * dpr);
+    canvas.height = Math.round(h * dpr);
+    var ctx = canvas.getContext("2d");
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    m = { ctx: ctx, w: w, h: h, dpr: dpr };
+    metrics.set(canvas, m);
+    return m;
+  }
+
+  var pulseBuf = [];
+  var breathBuf = [];
+  var PTS = 190;
+  for (var i = 0; i < PTS; i++) { pulseBuf.push(0); breathBuf.push(0); }
+
+  /* A pulse waveform: systolic peak, then the softer dicrotic bump.
+     Widths are tuned so a beat spans roughly 10px of trace — narrower
+     than this and the whole thing reads as a flat line with spikes. */
+  function pulseAt(phase) {
+    var a = Math.exp(-Math.pow((phase - 0.16) / 0.105, 2));
+    var b = 0.36 * Math.exp(-Math.pow((phase - 0.44) / 0.15, 2));
+    return a + b - 0.22;
+  }
+
+  function drawTrace(canvas, buf, color, fill) {
+    var m = fit(canvas);
+    if (!m) return;
+    var ctx = m.ctx, w = m.w, h = m.h;
+    ctx.clearRect(0, 0, w, h);
+    var step = w / (buf.length - 1);
+    var mid = h * 0.64;
+    var amp = h * 0.5;
+
+    ctx.beginPath();
+    for (var i = 0; i < buf.length; i++) {
+      var x = i * step;
+      var y = mid - buf[i] * amp;
+      if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+    }
+    if (fill) {
+      ctx.save();
+      ctx.lineTo(w, h); ctx.lineTo(0, h); ctx.closePath();
+      var g = ctx.createLinearGradient(0, 0, 0, h);
+      g.addColorStop(0, fill);
+      g.addColorStop(1, "rgba(0,0,0,0)");
+      ctx.fillStyle = g;
+      ctx.fill();
+      ctx.restore();
+      ctx.beginPath();
+      for (var j = 0; j < buf.length; j++) {
+        var x2 = j * step, y2 = mid - buf[j] * amp;
+        if (j === 0) ctx.moveTo(x2, y2); else ctx.lineTo(x2, y2);
+      }
+    }
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 1.6;
+    ctx.lineJoin = "round";
+    ctx.lineCap = "round";
+    ctx.stroke();
+  }
+
+  /* ---------------- animation loop ---------------- */
+  var last = 0;
+  var beatPhase = 0;
+  var breathPhase = 0;
+  var acc = 0;
+  var beatFlash = 0;
+
+  function frame(now) {
+    if (!last) last = now;
+    var dt = Math.min(64, now - last);
+    last = now;
+
+    /* ease the readouts toward the scene target, with a little jitter */
+    var k = 1 - Math.pow(0.0016, dt / 1000);
+    var jitter = (Math.random() - 0.5) * 1.4;
+    shown.hr += ((target.hr + jitter) - shown.hr) * k;
+    shown.br += ((target.br + jitter * 0.2) - shown.br) * k;
+    shown.hrv += ((target.hrv + jitter * 0.4) - shown.hrv) * k;
+
+    /* beat period comes from the heart rate actually on screen */
+    var period = 60000 / Math.max(35, shown.hr);
+    var prev = beatPhase;
+    beatPhase = (beatPhase + dt / period) % 1;
+    if (beatPhase < prev) beatFlash = 1;
+
+    breathPhase = (breathPhase + dt / (60000 / Math.max(4, shown.br))) % 1;
+
+    /* push samples at a fixed cadence so the trace scrolls evenly */
+    acc += dt;
+    while (acc >= 16) {
+      acc -= 16;
+      pulseBuf.push(pulseAt(beatPhase));
+      pulseBuf.shift();
+      breathBuf.push(Math.sin(breathPhase * Math.PI * 2) * 0.82);
+      breathBuf.shift();
+    }
+
+    beatFlash *= Math.pow(0.0009, dt / 1000);
+    if (el.heart) {
+      el.heart.style.transform = "scale(" + (1 + beatFlash * 0.42).toFixed(3) + ")";
+    }
+
+    paintValues();
+    drawTrace(el.pulse, pulseBuf, palette.hr, palette.hrSoft);
+    drawTrace(el.breath, breathBuf, palette.breath, palette.breathSoft);
+
+    requestAnimationFrame(frame);
+  }
+
+  /* Trace colours come from the theme tokens, read once and re-read
+     only when the theme actually changes. */
+  var probe = document.documentElement;
+  var palette = {};
+
+  function readPalette() {
+    var s = getComputedStyle(probe);
+    function v(n, fb) { return (s.getPropertyValue(n) || "").trim() || fb; }
+    palette.hr = v("--hr", "#FF5470");
+    palette.breath = v("--breath", "#4CC9F0");
+    palette.hrSoft = v("--hr-soft", "rgba(255,84,112,.13)");
+    palette.breathSoft = v("--breath-soft", "rgba(76,201,240,.13)");
+  }
+  readPalette();
+
+  if (window.matchMedia) {
+    var scheme = window.matchMedia("(prefers-color-scheme: dark)");
+    if (scheme.addEventListener) scheme.addEventListener("change", readPalette);
+  }
+  if (window.MutationObserver) {
+    new MutationObserver(readPalette).observe(probe, {
+      attributes: true,
+      attributeFilter: ["data-theme"]
+    });
+  }
+
+  applyScene("clutch", false);
+
+  function paintStatic() {
+    drawTrace(el.pulse, pulseBuf, palette.hr, palette.hrSoft);
+    drawTrace(el.breath, breathBuf, palette.breath, palette.breathSoft);
+  }
+
+  if (reduce) {
+    /* one static, representative frame */
+    for (var p = 0; p < pulseBuf.length; p++) {
+      pulseBuf[p] = pulseAt((p / 22) % 1);
+      breathBuf[p] = Math.sin((p / pulseBuf.length) * Math.PI * 6) * 0.8;
+    }
+    paintStatic();
+    window.addEventListener("resize", paintStatic);
+  } else {
+    requestAnimationFrame(frame);
+  }
+
+  /* ---------------- pricing toggle ---------------- */
+  var PRICES = {
+    monthly: {
+      pro:     { amt: "$9",  per: "/ month", bill: "Billed monthly" },
+      partner: { amt: "$19", per: "/ month", bill: "Billed monthly" }
+    },
+    annual: {
+      pro:     { amt: "$7.50",  per: "/ month", bill: "Billed $90 yearly" },
+      partner: { amt: "$15.83", per: "/ month", bill: "Billed $190 yearly" }
+    }
+  };
+
+  var tM = document.getElementById("tMonthly");
+  var tA = document.getElementById("tAnnual");
+
+  function setPeriod(period) {
+    var d = PRICES[period];
+    document.getElementById("amt-pro").textContent = d.pro.amt;
+    document.getElementById("per-pro").textContent = d.pro.per;
+    document.getElementById("bill-pro").textContent = d.pro.bill;
+    document.getElementById("amt-partner").textContent = d.partner.amt;
+    document.getElementById("per-partner").textContent = d.partner.per;
+    document.getElementById("bill-partner").textContent = d.partner.bill;
+    tM.setAttribute("aria-pressed", String(period === "monthly"));
+    tA.setAttribute("aria-pressed", String(period === "annual"));
+  }
+  tM.addEventListener("click", function () { setPeriod("monthly"); });
+  tA.addEventListener("click", function () { setPeriod("annual"); });
+
+  /* ---------------- waitlist ---------------- */
+  var form = document.getElementById("waitForm");
+  var ok = document.getElementById("waitOk");
+  form.addEventListener("submit", function (e) {
+    e.preventDefault();
+    var input = document.getElementById("waitEmail");
+    if (!input.value || input.value.indexOf("@") < 1) {
+      input.focus();
+      return;
+    }
+    form.style.display = "none";
+    ok.classList.add("on");
+  });
+})();
+</script>
+</body>
+</html>
