@@ -1196,9 +1196,9 @@ a { color: inherit; }
 
 .plans {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 20px;
-  /* stretch, so all three boxes match the tallest and the CTAs
+  /* stretch, so all four boxes match the tallest and the CTAs
      land on one line at the bottom */
   align-items: stretch;
 }
@@ -1261,6 +1261,25 @@ a { color: inherit; }
   color: var(--ink-3);
   margin-top: -10px;
 }
+/* Headline spec per tier — the one line that says what you actually get more
+   of as you move up the ladder. Sits between the price and the feature list. */
+.plan-meter {
+  font-family: var(--fm);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: var(--ink-2);
+  background: var(--panel-2);
+  border: 1px solid var(--line-soft);
+  border-radius: var(--r-sm);
+  padding: 9px 10px;
+  text-align: center;
+}
+.plan-pro .plan-meter {
+  color: var(--brand);
+  background: var(--brand-soft);
+  border-color: var(--brand-line);
+}
 .plan-inherit {
   font-family: var(--fm);
   font-size: 9.5px;
@@ -1290,6 +1309,58 @@ a { color: inherit; }
 .plan li svg { margin-top: 5px; }
 .plan li b { color: var(--ink); font-weight: 600; }
 .plan .btn { justify-content: center; }
+/* Top-up hours. Sits below the tiers because it is a consequence of the
+   monthly cap, not a fifth plan — hence the flatter, quieter panel. */
+.topup {
+  margin-top: 20px;
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  background: var(--panel);
+  padding: 24px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
+  gap: 24px 32px;
+  align-items: center;
+}
+.topup-head h3 { font-size: 19px; margin-bottom: 8px; }
+.topup-head p { color: var(--ink-2); font-size: 14.5px; }
+.topup-row {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+.topup-pack {
+  border: 1px solid var(--line-soft);
+  border-radius: var(--r-md);
+  background: var(--panel-2);
+  padding: 14px 12px;
+  display: grid;
+  justify-items: center;
+  gap: 4px;
+  text-align: center;
+}
+.topup-amt {
+  font-family: var(--fd);
+  font-weight: 700;
+  font-size: 21px;
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+.topup-price { font-size: 15px; color: var(--ink-2); }
+.topup-rate {
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.07em;
+  color: var(--ink-3);
+}
+.topup-note {
+  grid-column: 1 / -1;
+  margin: 0;
+  padding-top: 18px;
+  border-top: 1px solid var(--line-soft);
+  color: var(--ink-3);
+  font-size: 13px;
+}
 .price-foot {
   text-align: center;
   margin-top: 30px;
@@ -1392,7 +1463,10 @@ a { color: inherit; }
 @media (max-width: 1000px) {
   .hero-in, .priv, .recap, .wait, .feat-grid { grid-template-columns: minmax(0, 1fr); gap: 40px; }
   .recap { gap: 32px; }
-  .signals, .react, .react-notes, .plans { grid-template-columns: minmax(0, 1fr); }
+  .signals, .react, .react-notes { grid-template-columns: minmax(0, 1fr); }
+  /* four tiers go 2x2 here rather than straight to one column */
+  .plans { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .topup { grid-template-columns: minmax(0, 1fr); gap: 20px; }
   .signals { border-radius: var(--r-lg); }
   .shead { grid-template-columns: minmax(0, 1fr); gap: 16px; margin-bottom: 36px; }
   .shead-label { border-top: 0; padding-top: 0; }
@@ -1417,6 +1491,7 @@ a { color: inherit; }
   .stage { aspect-ratio: 4 / 5; }
   .foot-in { grid-template-columns: minmax(0, 1fr); gap: 28px; }
   .emote { width: 46px; height: 46px; padding: 10px; top: 19%; }
+  .plans { grid-template-columns: minmax(0, 1fr); }
   .pack-row { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
   .pack { height: 98px; gap: 10px; }
   .pack-disc { width: 42px; height: 42px; padding: 9px; }
@@ -2130,6 +2205,7 @@ a { color: inherit; }
           <span class="plan-per">forever</span>
         </div>
         <span class="plan-bill" id="bill-free">No account needed</span>
+        <span class="plan-meter">5 h / month</span>
         <span class="plan-inherit">What you get</span>
         <ul>
           <li><svg width="13" height="13" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3.4 8.4 6.4 11.4l6.2-6.8" stroke="var(--ink-3)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span><b>Heart rate</b> overlay, updated every 3 s</span></li>
@@ -2138,6 +2214,25 @@ a { color: inherit; }
           <li><svg width="13" height="13" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3.4 8.4 6.4 11.4l6.2-6.8" stroke="var(--ink-3)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Small StreamEmote watermark</span></li>
         </ul>
         <a class="btn btn-ghost" href="#top">Download free</a>
+      </div>
+
+      <div class="plan">
+        <div class="plan-name"><h3>Standard</h3></div>
+        <span class="plan-for">For a regular schedule, without the extras</span>
+        <div class="plan-cost">
+          <span class="plan-amt tnum" id="amt-standard">$5</span>
+          <span class="plan-per" id="per-standard">/ month</span>
+        </div>
+        <span class="plan-bill" id="bill-standard">Billed monthly</span>
+        <span class="plan-meter">25 h / month</span>
+        <span class="plan-inherit">Everything in Free, plus</span>
+        <ul>
+          <li><svg width="13" height="13" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3.4 8.4 6.4 11.4l6.2-6.8" stroke="var(--ink-3)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span><b>All three vitals</b> at 1-second resolution</span></li>
+          <li><svg width="13" height="13" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3.4 8.4 6.4 11.4l6.2-6.8" stroke="var(--ink-3)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Stress state with the raw RMSSD</span></li>
+          <li><svg width="13" height="13" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3.4 8.4 6.4 11.4l6.2-6.8" stroke="var(--ink-3)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Six overlay styles, no watermark</span></li>
+          <li><svg width="13" height="13" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3.4 8.4 6.4 11.4l6.2-6.8" stroke="var(--ink-3)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span>7-day session history</span></li>
+        </ul>
+        <a class="btn btn-ghost" href="#top">Get Standard</a>
       </div>
 
       <div class="plan plan-pro">
@@ -2149,12 +2244,12 @@ a { color: inherit; }
           <span class="plan-per" id="per-pro">/ month</span>
         </div>
         <span class="plan-bill" id="bill-pro">Billed monthly</span>
-        <span class="plan-inherit">Everything in Free, plus</span>
+        <span class="plan-meter">80 h / month</span>
+        <span class="plan-inherit">Everything in Standard, plus</span>
         <ul>
-          <li><svg width="13" height="13" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3.4 8.4 6.4 11.4l6.2-6.8" stroke="var(--brand)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span><b>All three vitals</b> at 1-second resolution</span></li>
           <li><svg width="13" height="13" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3.4 8.4 6.4 11.4l6.2-6.8" stroke="var(--brand)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span><b>Mood reactions</b> and overlay face filters</span></li>
           <li><svg width="13" height="13" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3.4 8.4 6.4 11.4l6.2-6.8" stroke="var(--brand)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span><b>Clutch alerts</b> — shake, sound or banner</span></li>
-          <li><svg width="13" height="13" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3.4 8.4 6.4 11.4l6.2-6.8" stroke="var(--brand)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Every overlay style, no watermark</span></li>
+          <li><svg width="13" height="13" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3.4 8.4 6.4 11.4l6.2-6.8" stroke="var(--brand)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Every overlay style and emote pack</span></li>
           <li><svg width="13" height="13" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3.4 8.4 6.4 11.4l6.2-6.8" stroke="var(--brand)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Session recap card, 30-day history</span></li>
         </ul>
         <a class="btn btn-primary" href="#top">Get Pro</a>
@@ -2168,6 +2263,7 @@ a { color: inherit; }
           <span class="plan-per" id="per-partner">/ month</span>
         </div>
         <span class="plan-bill" id="bill-partner">Billed monthly</span>
+        <span class="plan-meter">Unlimited hours</span>
         <span class="plan-inherit">Everything in Pro, plus</span>
         <ul>
           <li><svg width="13" height="13" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3.4 8.4 6.4 11.4l6.2-6.8" stroke="var(--ink-3)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span><b>Heart-rate donations</b> and challenge leaderboard</span></li>
@@ -2178,6 +2274,39 @@ a { color: inherit; }
         </ul>
         <a class="btn btn-ghost" href="#top">Get Partner</a>
       </div>
+    </div>
+
+    <div class="topup">
+      <div class="topup-head">
+        <h3>Out of hours before the month is out?</h3>
+        <p>
+          Add hours at any point in the month. They sit behind your monthly
+          allowance and are only spent once that runs out — and they do not
+          expire, so whatever you don't use stays for next month.
+        </p>
+      </div>
+      <div class="topup-row">
+        <div class="topup-pack">
+          <span class="topup-amt tnum">+10 h</span>
+          <span class="topup-price tnum">$3</span>
+          <span class="topup-rate mono">$0.30 / h</span>
+        </div>
+        <div class="topup-pack">
+          <span class="topup-amt tnum">+40 h</span>
+          <span class="topup-price tnum">$10</span>
+          <span class="topup-rate mono">$0.25 / h</span>
+        </div>
+        <div class="topup-pack">
+          <span class="topup-amt tnum">+120 h</span>
+          <span class="topup-price tnum">$24</span>
+          <span class="topup-rate mono">$0.20 / h</span>
+        </div>
+      </div>
+      <p class="topup-note">
+        Hours are counted only while the overlay is live in OBS — not while OBS
+        merely sits open. Top-ups are a one-off purchase, so the billing toggle
+        above does not apply to them. Partner has no cap, so it never needs any.
+      </p>
     </div>
 
     <p class="price-foot">
@@ -2585,28 +2714,33 @@ a { color: inherit; }
   }
 
   /* ---------------- pricing toggle ---------------- */
+  /* Annual is a flat -17% on every paid tier, matching the toggle badge:
+     50/60, 90/108 and 190/228 all land on 0.833. */
   var PRICES = {
     monthly: {
-      pro:     { amt: "$9",  per: "/ month", bill: "Billed monthly" },
-      partner: { amt: "$19", per: "/ month", bill: "Billed monthly" }
+      standard: { amt: "$5",  per: "/ month", bill: "Billed monthly" },
+      pro:      { amt: "$9",  per: "/ month", bill: "Billed monthly" },
+      partner:  { amt: "$19", per: "/ month", bill: "Billed monthly" }
     },
     annual: {
-      pro:     { amt: "$7.50",  per: "/ month", bill: "Billed $90 yearly" },
-      partner: { amt: "$15.83", per: "/ month", bill: "Billed $190 yearly" }
+      standard: { amt: "$4.17",  per: "/ month", bill: "Billed $50 yearly" },
+      pro:      { amt: "$7.50",  per: "/ month", bill: "Billed $90 yearly" },
+      partner:  { amt: "$15.83", per: "/ month", bill: "Billed $190 yearly" }
     }
   };
 
   var tM = document.getElementById("tMonthly");
   var tA = document.getElementById("tAnnual");
 
+  /* Driven off the PRICES keys, so adding a tier means adding it there and
+     giving the card amt-/per-/bill- ids to match. */
   function setPeriod(period) {
     var d = PRICES[period];
-    document.getElementById("amt-pro").textContent = d.pro.amt;
-    document.getElementById("per-pro").textContent = d.pro.per;
-    document.getElementById("bill-pro").textContent = d.pro.bill;
-    document.getElementById("amt-partner").textContent = d.partner.amt;
-    document.getElementById("per-partner").textContent = d.partner.per;
-    document.getElementById("bill-partner").textContent = d.partner.bill;
+    Object.keys(d).forEach(function (plan) {
+      document.getElementById("amt-" + plan).textContent = d[plan].amt;
+      document.getElementById("per-" + plan).textContent = d[plan].per;
+      document.getElementById("bill-" + plan).textContent = d[plan].bill;
+    });
     tM.setAttribute("aria-pressed", String(period === "monthly"));
     tA.setAttribute("aria-pressed", String(period === "annual"));
   }
