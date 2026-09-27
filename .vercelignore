@@ -1,0 +1,5 @@
+# Vercel serves the repository root as static files, so anything left here is
+# publicly fetchable. Only the page and its assets should ship.
+CLAUDE.md
+tools/
+.claude/
