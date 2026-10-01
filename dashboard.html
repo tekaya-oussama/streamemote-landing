@@ -1,0 +1,1114 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="StreamEmote account dashboard — overlay hours, billing and profile.">
+<meta name="robots" content="noindex">
+<title>StreamEmote — Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=Karla:wght@400;500;600&family=Martian+Mono:wght@400;500;600&display=swap">
+<style>
+/* ============================================================
+   This file duplicates the TOKENS, BASE and BUTTONS blocks from
+   index.html verbatim. They were copied by script, not retyped, so
+   they start identical — but they are now in TWO places and must be
+   changed in lockstep. Any new colour needs a token in both files,
+   in both the dark and light branches.
+   ============================================================ */
+/* ============================================================
+   TOKENS — dark-first. Bare :root is the dark palette; light is
+   layered on top for prefers-color-scheme AND the explicit stamp.
+   ============================================================ */
+:root {
+  color-scheme: dark;
+
+  --ground:      #0B0A10;
+  --ground-alt:  #100E18;
+  --panel:       #141220;
+  --panel-2:     #1B1828;
+  --line:        #241F36;
+  --line-soft:   #1B1728;
+
+  --ink:         #EDEAF6;
+  --ink-2:       #B4ACCB;
+  --ink-3:       #837B9C;
+
+  --brand:       #7C5CFF;
+  --brand-ink:   #FFFFFF;
+  --brand-soft:  rgba(124, 92, 255, 0.14);
+  --brand-line:  rgba(124, 92, 255, 0.38);
+
+  --hr:          #FF5470;
+  --breath:      #4CC9F0;
+  --ok:          #34D8A0;
+  --warn:        #FFB43D;
+  --crit:        #FF5470;
+
+  --hr-soft:     rgba(255, 84, 112, 0.13);
+  --breath-soft: rgba(76, 201, 240, 0.13);
+  --ok-soft:     rgba(52, 216, 160, 0.13);
+  --warn-soft:   rgba(255, 180, 61, 0.14);
+
+  /* emote packs — glyph colour + disc behind it */
+  --p-happy:     #F0B429;  --p-happy-bg:   rgba(240, 180, 41, 0.15);
+  --p-angry:     #FF5470;  --p-angry-bg:   rgba(255, 84, 112, 0.15);
+  --p-shocked:   #9B80FF;  --p-shocked-bg: rgba(124, 92, 255, 0.20);
+  --p-laughing:  #34D8A0;  --p-laughing-bg:rgba(52, 216, 160, 0.15);
+  --p-sad:       #4CC9F0;  --p-sad-bg:     rgba(76, 201, 240, 0.15);
+
+  --stage:       #08070C;
+  --stage-grid:  rgba(124, 92, 255, 0.07);
+  --shadow:      0 1px 2px rgba(0,0,0,.5), 0 18px 44px -20px rgba(0,0,0,.8);
+
+  --fd: "Archivo", "Helvetica Neue", Arial, sans-serif;
+  --fb: "Karla", "Helvetica Neue", Arial, sans-serif;
+  --fm: "Martian Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+
+  --wrap: 1180px;
+  --r-sm: 6px;
+  --r-md: 10px;
+  --r-lg: 16px;
+}
+
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    color-scheme: light;
+    --ground:      #F7F6FB;
+    --ground-alt:  #FFFFFF;
+    --panel:       #FFFFFF;
+    --panel-2:     #F2F0F9;
+    --line:        #E1DDF0;
+    --line-soft:   #EBE8F5;
+
+    --ink:         #16121F;
+    --ink-2:       #4E4763;
+    --ink-3:       #6F678A;
+
+    --brand:       #5B3EE8;
+    --brand-ink:   #FFFFFF;
+    --brand-soft:  rgba(91, 62, 232, 0.09);
+    --brand-line:  rgba(91, 62, 232, 0.28);
+
+    --hr:          #D4234A;
+    --breath:      #0B7FAE;
+    --ok:          #0B8F66;
+    --warn:        #9A6100;
+    --crit:        #D4234A;
+
+    --hr-soft:     rgba(212, 35, 74, 0.09);
+    --breath-soft: rgba(11, 127, 174, 0.09);
+    --ok-soft:     rgba(11, 143, 102, 0.09);
+    --warn-soft:   rgba(154, 97, 0, 0.10);
+
+    --p-happy:     #A97605;  --p-happy-bg:   #FDF1CE;
+    --p-angry:     #D4234A;  --p-angry-bg:   #FBE2E5;
+    --p-shocked:   #5B3EE8;  --p-shocked-bg: #E8E3FD;
+    --p-laughing:  #0B8F66;  --p-laughing-bg:#DBF4E7;
+    --p-sad:       #0B7FAE;  --p-sad-bg:     #DEEDFA;
+
+    --stage:       #14111C;
+    --stage-grid:  rgba(124, 92, 255, 0.10);
+    --shadow:      0 1px 2px rgba(22,18,31,.06), 0 16px 40px -22px rgba(22,18,31,.28);
+  }
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
+  --ground:      #F7F6FB;
+  --ground-alt:  #FFFFFF;
+  --panel:       #FFFFFF;
+  --panel-2:     #F2F0F9;
+  --line:        #E1DDF0;
+  --line-soft:   #EBE8F5;
+
+  --ink:         #16121F;
+  --ink-2:       #4E4763;
+  --ink-3:       #6F678A;
+
+  --brand:       #5B3EE8;
+  --brand-ink:   #FFFFFF;
+  --brand-soft:  rgba(91, 62, 232, 0.09);
+  --brand-line:  rgba(91, 62, 232, 0.28);
+
+  --hr:          #D4234A;
+  --breath:      #0B7FAE;
+  --ok:          #0B8F66;
+  --warn:        #9A6100;
+  --crit:        #D4234A;
+
+  --hr-soft:     rgba(212, 35, 74, 0.09);
+  --breath-soft: rgba(11, 127, 174, 0.09);
+  --ok-soft:     rgba(11, 143, 102, 0.09);
+  --warn-soft:   rgba(154, 97, 0, 0.10);
+
+  --p-happy:     #A97605;  --p-happy-bg:   #FDF1CE;
+  --p-angry:     #D4234A;  --p-angry-bg:   #FBE2E5;
+  --p-shocked:   #5B3EE8;  --p-shocked-bg: #E8E3FD;
+  --p-laughing:  #0B8F66;  --p-laughing-bg:#DBF4E7;
+  --p-sad:       #0B7FAE;  --p-sad-bg:     #DEEDFA;
+
+  --stage:       #14111C;
+  --stage-grid:  rgba(124, 92, 255, 0.10);
+  --shadow:      0 1px 2px rgba(22,18,31,.06), 0 16px 40px -22px rgba(22,18,31,.28);
+}
+
+/* ============================================================
+   BASE
+   ============================================================ */
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--ground);
+  color: var(--ink);
+  font-family: var(--fb);
+  font-size: 17px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--fd);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  text-wrap: balance;
+  margin: 0;
+}
+
+p { margin: 0; }
+a { color: inherit; }
+
+:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 3px;
+  border-radius: 3px;
+}
+
+.wrap {
+  max-width: var(--wrap);
+  margin-inline: auto;
+  padding-inline: 28px;
+}
+
+.mono {
+  font-family: var(--fm);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+
+.tnum { font-variant-numeric: tabular-nums; }
+
+/* ============================================================
+   BUTTONS
+   ============================================================ */
+.btn {
+  font-family: var(--fd);
+  font-weight: 600;
+  font-size: 15px;
+  letter-spacing: -0.01em;
+  padding: 11px 20px;
+  border-radius: var(--r-sm);
+  border: 1px solid transparent;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+  transition: background .16s, border-color .16s, color .16s, transform .16s;
+}
+.btn-primary {
+  background: var(--brand);
+  color: var(--brand-ink);
+  box-shadow: 0 8px 22px -12px var(--brand);
+}
+.btn-primary:hover { transform: translateY(-1px); }
+.btn-ghost {
+  background: transparent;
+  color: var(--ink);
+  border-color: var(--line);
+}
+.btn-ghost:hover { border-color: var(--brand-line); background: var(--brand-soft); }
+.btn-sm { font-size: 14px; padding: 8px 15px; }
+
+
+/* ============================================================
+   DASHBOARD SHELL
+   ============================================================ */
+:root { --wrap: 1120px; }
+
+.dnav {
+  position: sticky;
+  top: 0;
+  z-index: 60;
+  background: color-mix(in srgb, var(--ground) 88%, transparent);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--line-soft);
+}
+.dnav-in {
+  max-width: var(--wrap);
+  margin-inline: auto;
+  padding: 13px 28px;
+  display: flex;
+  align-items: center;
+  gap: 26px;
+}
+.dnav .brand { display: flex; align-items: center; text-decoration: none; }
+/* Deliberately NOT '.dnav .brand-logo': that selector is (0,2,0) and would
+   outrank the (0,1,0) '.brand-logo-light { display: none }' below, leaving
+   both lockups painted on top of each other. Same specificity as
+   index.html, so the later swap rules win. */
+.brand-logo { display: block; width: auto; height: 24px; flex: none; }
+/* Same two-variant lockup swap as index.html. Unlike the landing page these
+   point at assets/logo-*.png instead of inlined base64 — the files are already
+   in the repo and unreferenced, and duplicating 8 KB of base64 for a second
+   page is not worth it. */
+.brand-logo-light { display: none; }
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) .brand-logo-dark { display: none; }
+  :root:not([data-theme="dark"]) .brand-logo-light { display: block; }
+}
+:root[data-theme="light"] .brand-logo-dark { display: none; }
+:root[data-theme="light"] .brand-logo-light { display: block; }
+/* ============================================================
+   RAIL — fixed full-height icon nav. The page is offset with a
+   padding on <body> rather than a flex sibling, so .dnav-in and
+   .dmain stay centred on the same axis as each other.
+   ============================================================ */
+:root { --rail: 82px; }
+body { padding-left: var(--rail); }
+
+.rail {
+  position: fixed;
+  left: 0; top: 0; bottom: 0;
+  width: var(--rail);
+  z-index: 70;
+  background: var(--ground-alt);
+  border-right: 1px solid var(--line-soft);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 16px 8px;
+}
+.rail a {
+  width: 100%;
+  display: grid;
+  justify-items: center;
+  gap: 5px;
+  padding: 10px 2px 9px;
+  border-radius: var(--r-md);
+  color: var(--ink-3);
+  text-decoration: none;
+}
+.rail a span {
+  font-family: var(--fm);
+  font-size: 8.5px;
+  font-weight: 600;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+}
+.rail a:hover { color: var(--ink); background: var(--panel-2); }
+.rail a[aria-current="page"] { color: var(--brand); background: var(--brand-soft); }
+.rail a[aria-current="page"] svg { stroke-width: 2; }
+
+/* The avatar is a second route into #profile, so it is excluded from the
+   aria-current sweep — two links marked current would be a lie. */
+.rail-me { margin-top: auto; }
+.rail-me:hover { background: transparent; }
+.rail-av {
+  width: 34px; height: 34px;
+  border-radius: 99px;
+  background: var(--brand-soft);
+  border: 1px solid var(--brand-line);
+  display: grid;
+  place-items: center;
+  font-family: var(--fd) !important;
+  font-weight: 800;
+  font-size: 12px !important;
+  letter-spacing: 0 !important;
+  text-transform: none !important;
+  color: var(--brand);
+}
+/* The push lives on the wrapper, not on either child: Sign out is hidden when
+   signed out, so putting it on a child would lose the push in one state. */
+.dnav-end { margin-left: auto; display: flex; align-items: center; gap: 16px; }
+.dback { font-size: 14px; color: var(--ink-3); text-decoration: none; white-space: nowrap; }
+.dback:hover { color: var(--ink); }
+
+.dmain { max-width: var(--wrap); margin-inline: auto; padding: 36px 28px 72px; }
+/* Any element given an explicit display (.rail and .proto are flex) would
+   otherwise outrank the UA rule behind the hidden attribute and stay visible.
+   One global rule rather than one per component. */
+[hidden] { display: none !important; }
+
+.vhead { margin-bottom: 24px; }
+.vhead h1 { font-size: clamp(26px, 3.4vw, 34px); margin-bottom: 7px; }
+.vhead p { color: var(--ink-2); max-width: 60ch; }
+
+/* ============================================================
+   USAGE — the hours ledger
+   ============================================================ */
+.sum {
+  display: grid;
+  grid-template-columns: minmax(0,1.15fr) 18px minmax(0,1fr) 18px minmax(0,1fr) 18px minmax(0,1fr);
+  align-items: center;
+  gap: 0 10px;
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  background: var(--panel);
+  padding: 22px 24px;
+}
+.sum-op { font-family: var(--fd); font-size: 19px; color: var(--ink-3); text-align: center; }
+.sum-cell > span {
+  display: block;
+  font-family: var(--fm);
+  font-size: 9.5px;
+  font-weight: 600;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-bottom: 7px;
+}
+.sum-val { font-family: var(--fd); font-weight: 800; font-size: 34px; letter-spacing: -.03em; line-height: 1; }
+.sum-cell.lead .sum-val { color: var(--brand); font-size: 40px; }
+.sum-unit { font-family: var(--fm); font-size: 11px; font-weight: 500; color: var(--ink-3); margin-left: 4px; }
+
+.meter-wrap { margin-top: 16px; }
+.meter-top {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 8px;
+  font-family: var(--fm);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.meter-top b { color: var(--ink); }
+.meter-top .right { margin-left: auto; text-transform: none; letter-spacing: .04em; }
+.meter {
+  height: 9px;
+  border-radius: 99px;
+  background: var(--panel-2);
+  border: 1px solid var(--line-soft);
+  overflow: hidden;
+}
+.meter i { display: block; height: 100%; background: var(--brand); border-radius: 99px; }
+.meter.warn i { background: var(--warn); }
+.meter.crit i { background: var(--crit); }
+.meter-note { margin-top: 9px; font-size: 13px; color: var(--ink-3); }
+
+.bar-actions { display: flex; align-items: center; gap: 12px; margin: 22px 0 10px; flex-wrap: wrap; }
+.bar-actions .spacer { margin-left: auto; }
+
+.tabs {
+  display: flex;
+  gap: 22px;
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 4px;
+  overflow-x: auto;
+}
+.tabs button {
+  font-family: var(--fb);
+  font-size: 14.5px;
+  font-weight: 500;
+  color: var(--ink-3);
+  background: none;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  padding: 10px 1px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.tabs button:hover { color: var(--ink); }
+.tabs button[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--brand); font-weight: 600; }
+
+.ledger { border: 1px solid var(--line); border-radius: var(--r-lg); background: var(--panel); margin-top: 16px; }
+.lrow {
+  display: grid;
+  grid-template-columns: minmax(0,1fr) auto;
+  gap: 4px 18px;
+  padding: 15px 20px;
+  border-bottom: 1px solid var(--line-soft);
+}
+.lrow:last-child { border-bottom: 0; }
+.lrow-t { font-weight: 600; color: var(--ink); display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.lrow-s { font-family: var(--fm); font-size: 10.5px; color: var(--ink-3); letter-spacing: .03em; }
+.lrow-v { font-family: var(--fd); font-weight: 700; font-size: 16px; text-align: right; white-space: nowrap; }
+.lrow-v.pos { color: var(--ok); }
+.lrow-v.neg { color: var(--crit); }
+.lrow-x { font-family: var(--fm); font-size: 10px; color: var(--ink-3); text-align: right; letter-spacing: .03em; }
+.pill {
+  font-family: var(--fm);
+  font-size: 8.5px;
+  font-weight: 600;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  padding: 2.5px 6px;
+  border-radius: 3px;
+  background: var(--warn-soft);
+  color: var(--warn);
+}
+.empty { padding: 64px 20px; text-align: center; color: var(--ink-3); }
+.empty strong { display: block; color: var(--ink); font-family: var(--fd); font-size: 17px; margin-bottom: 6px; }
+
+/* ============================================================
+   BILLING
+   ============================================================ */
+.pcard { border: 1px solid var(--brand-line); border-radius: var(--r-lg); background: var(--panel); padding: 22px 24px; box-shadow: var(--shadow); }
+.pcard-h { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; flex-wrap: wrap; }
+.pcard-h h2 { font-size: 21px; }
+.tag-ok { font-family: var(--fm); font-size: 8.5px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; padding: 3px 7px; border-radius: 3px; background: var(--ok-soft); color: var(--ok); }
+.pcard-x { font-family: var(--fm); font-size: 10.5px; color: var(--ink-3); letter-spacing: .03em; }
+.drow { display: flex; align-items: baseline; gap: 12px; padding: 11px 0; border-bottom: 1px solid var(--line-soft); font-size: 14.5px; }
+.drow:last-of-type { border-bottom: 0; }
+.drow dt { color: var(--ink-3); }
+.drow dd { margin: 0 0 0 auto; font-family: var(--fm); font-size: 13px; color: var(--ink); text-align: right; }
+.drow.sub { padding-left: 18px; }
+.drow.sub dt, .drow.sub dd { color: var(--ink-3); font-size: 12.5px; }
+.drow.total dd { font-family: var(--fd); font-weight: 700; font-size: 17px; }
+.dl { margin: 18px 0 0; }
+
+/* ============================================================
+   PROFILE
+   ============================================================ */
+.phead {
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  background: var(--panel);
+  padding: 30px 24px 24px;
+  text-align: center;
+  margin-bottom: 18px;
+}
+.avatar {
+  width: 72px; height: 72px;
+  border-radius: 99px;
+  margin: 0 auto 14px;
+  background: var(--brand-soft);
+  border: 1px solid var(--brand-line);
+  display: grid;
+  place-items: center;
+  font-family: var(--fd);
+  font-weight: 800;
+  font-size: 26px;
+  color: var(--brand);
+}
+.phead h1 { font-size: 26px; margin-bottom: 6px; }
+.handle { font-family: var(--fm); font-size: 11px; color: var(--ink-3); letter-spacing: .06em; }
+.pbio { color: var(--ink-2); margin: 12px auto 0; max-width: 46ch; }
+.stats { display: flex; justify-content: center; gap: 36px; margin-top: 22px; flex-wrap: wrap; }
+.stat { text-align: center; }
+.stat b { display: block; font-family: var(--fd); font-weight: 800; font-size: 22px; }
+.stat span { font-family: var(--fm); font-size: 9px; font-weight: 600; letter-spacing: .11em; text-transform: uppercase; color: var(--ink-3); }
+.pcards { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 14px; }
+.pc { border: 1px solid var(--line); border-radius: var(--r-lg); background: var(--panel); padding: 18px 20px; }
+.pc-h { font-family: var(--fm); font-size: 9.5px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 10px; }
+.pc-v { font-family: var(--fd); font-weight: 700; font-size: 19px; margin-bottom: 5px; }
+.pc p { font-size: 13.5px; color: var(--ink-3); margin: 0; }
+.code { font-family: var(--fm); font-size: 13px; color: var(--ink); background: var(--panel-2); border: 1px solid var(--line-soft); border-radius: var(--r-sm); padding: 7px 10px; display: inline-block; margin-top: 4px; }
+
+/* ============================================================
+   TOP-UP MODAL
+   ============================================================ */
+.scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  background: rgba(8, 6, 14, .62);
+  backdrop-filter: blur(3px);
+  display: grid;
+  place-items: center;
+  padding: 24px;
+}
+.scrim[hidden] { display: none !important; }
+.sheet {
+  width: 100%;
+  max-width: 560px;
+  max-height: 86vh;
+  overflow-y: auto;
+  background: var(--ground);
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  box-shadow: 0 30px 70px -30px rgba(0,0,0,.7);
+  padding: 24px;
+}
+.sheet-h { display: flex; align-items: flex-start; gap: 14px; margin-bottom: 4px; }
+.sheet-h h2 { font-size: 21px; }
+.xbtn {
+  margin-left: auto;
+  background: none;
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+  color: var(--ink-2);
+  width: 30px; height: 30px;
+  cursor: pointer;
+  font-size: 15px;
+  line-height: 1;
+  flex: none;
+}
+.xbtn:hover { color: var(--ink); border-color: var(--brand-line); background: var(--brand-soft); }
+.sheet > p { color: var(--ink-2); font-size: 14px; }
+.packs { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 10px; margin: 18px 0 14px; }
+.pack {
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  background: var(--panel);
+  padding: 15px 12px;
+  display: grid;
+  justify-items: center;
+  gap: 4px;
+  cursor: pointer;
+  text-align: center;
+}
+.pack:hover { border-color: var(--brand-line); }
+.pack[aria-checked="true"] { border-color: var(--brand); background: var(--brand-soft); box-shadow: var(--shadow); }
+.pack-h { font-family: var(--fd); font-weight: 700; font-size: 20px; letter-spacing: -.02em; line-height: 1; }
+.pack-p { font-size: 15px; color: var(--ink-2); }
+.pack-r { font-family: var(--fm); font-size: 9px; font-weight: 500; letter-spacing: .06em; color: var(--ink-3); }
+.sheet-note { font-size: 12.5px; color: var(--ink-3); border-top: 1px solid var(--line-soft); padding-top: 13px; margin: 0 0 16px; }
+.sheet-foot { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.sheet-foot .total { font-family: var(--fm); font-size: 11px; letter-spacing: .05em; color: var(--ink-3); }
+.sheet-foot .total b { font-family: var(--fd); font-size: 18px; color: var(--ink); }
+.sheet-foot .btn { margin-left: auto; }
+
+/* ============================================================
+   SIGN-IN GATE + SESSION CHROME
+   ============================================================ */
+.gate { max-width: 460px; margin: 40px auto 0; text-align: center; }
+.gate-card {
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  background: var(--panel);
+  padding: 34px 28px 28px;
+}
+.gate h1 { font-size: 26px; margin-bottom: 10px; }
+.gate p { color: var(--ink-2); margin-bottom: 20px; }
+.gate .btn { width: 100%; justify-content: center; }
+.gate-note { font-size: 12.5px; color: var(--ink-3); margin: 16px 0 0; }
+
+.proto {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border: 1px solid var(--warn-soft);
+  border-left: 3px solid var(--warn);
+  border-radius: var(--r-sm);
+  background: var(--warn-soft);
+  padding: 9px 13px;
+  margin-bottom: 22px;
+  font-size: 13px;
+  color: var(--ink-2);
+}
+.proto b { color: var(--ink); }
+.dsignout {
+  font-family: var(--fm);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  background: none;
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+  padding: 6px 11px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.dsignout:hover { color: var(--ink); border-color: var(--brand-line); background: var(--brand-soft); }
+
+/* ============================================================
+   RESPONSIVE — all breakpoints collected here, as in index.html
+   ============================================================ */
+@media (max-width: 920px) {
+  .sum { grid-template-columns: repeat(2, minmax(0,1fr)); gap: 20px 16px; }
+  .sum-op { display: none; }
+  .pcards { grid-template-columns: minmax(0,1fr); }
+}
+@media (max-width: 620px) {
+  /* The rail becomes a bottom bar: thumbs reach the bottom of a phone, not the
+     left edge. The avatar drops out, Profile is already in the bar. */
+  body { padding-left: 0; padding-bottom: 70px; }
+  .rail {
+    left: 0; right: 0; top: auto; bottom: 0;
+    width: auto; height: auto;
+    flex-direction: row;
+    border-right: 0;
+    border-top: 1px solid var(--line-soft);
+    padding: 7px 8px;
+  }
+  .rail a { padding: 7px 2px 6px; }
+  /* Qualified: '.rail a' is (0,1,1) and would outrank a bare '.rail-me'. */
+  .rail a.rail-me { display: none; }
+  .dnav-in, .dmain { padding-inline: 20px; }
+  .dmain { padding-top: 26px; }
+  .dnav-in { gap: 14px; flex-wrap: wrap; }
+  .dback { margin-left: auto; }
+  .sum { grid-template-columns: minmax(0,1fr); }
+  .packs { grid-template-columns: minmax(0,1fr); }
+  .pack { grid-template-columns: auto auto; justify-items: start; align-items: baseline; gap: 4px 10px; text-align: left; }
+  .stats { gap: 22px; }
+}
+</style>
+</head>
+<body>
+
+<nav class="dnav">
+  <div class="dnav-in">
+    <a class="brand" href="index.html" aria-label="StreamEmote — home">
+      <img class="brand-logo brand-logo-dark" alt="StreamEmote" width="232" height="63" src="assets/logo-dark.png">
+      <img class="brand-logo brand-logo-light" alt="StreamEmote" width="232" height="63" src="assets/logo-light.png">
+    </a>
+    <div class="dnav-end">
+      <button class="dsignout" type="button" id="signOut" hidden>Sign out</button>
+      <a class="dback" href="index.html">Back to site</a>
+    </div>
+  </div>
+</nav>
+
+
+<aside class="rail" id="rail" hidden>
+  <a href="#usage"   data-view="usage"><svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.6V12l3 1.9"/></svg><span>Hours</span></a>
+  <a href="#billing" data-view="billing"><svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.6" y="5.4" width="18.8" height="13.2" rx="2.6"/><path d="M2.6 10.2h18.8M6.4 14.6h3.4"/></svg><span>Billing</span></a>
+  <a href="#profile" data-view="profile"><svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8.4" r="3.9"/><path d="M4.8 20.2c0-3.6 3.2-5.6 7.2-5.6s7.2 2 7.2 5.6"/></svg><span>Profile</span></a>
+  <a href="#profile" class="rail-me" aria-label="Demo Streamer — profile"><span class="rail-av" aria-hidden="true">DS</span></a>
+</aside>
+
+<main class="dmain">
+
+  <section class="gate" id="gate" hidden>
+    <div class="gate-card">
+      <h1>Sign in</h1>
+      <p>
+        Your hours, billing and profile live behind this. Sign in to see them.
+      </p>
+      <button class="btn btn-primary" type="button" id="doSignIn">Continue as demo streamer</button>
+      <p class="gate-note">
+        There is no account system yet, so there is no password field and
+        nothing is checked. This button sets a flag in your own browser so the
+        dashboard has a signed-in state to show. It protects nothing.
+      </p>
+    </div>
+  </section>
+
+  <div class="proto" id="protoBanner" hidden>
+    <span><b>Prototype.</b> Every figure below is made up, and nothing here is charged, cancelled or saved anywhere.</span>
+  </div>
+
+  <!-- ============================ HOURS ============================ -->
+  <section class="view" id="view-usage">
+    <div class="vhead">
+      <h1>Your hours</h1>
+      <p>
+        Hours are counted only while the overlay is live in OBS — not while OBS
+        merely sits open. Top-up hours sit behind your monthly allowance and are
+        spent only once it runs out.
+      </p>
+    </div>
+
+    <div class="sum">
+      <div class="sum-cell lead">
+        <span>Hours remaining</span>
+        <div><em class="sum-val tnum" style="font-style:normal">68</em><em class="sum-unit" style="font-style:normal">h</em></div>
+      </div>
+      <div class="sum-op" aria-hidden="true">=</div>
+      <div class="sum-cell">
+        <span>Plan allowance</span>
+        <div><em class="sum-val tnum" style="font-style:normal">56</em><em class="sum-unit" style="font-style:normal">h</em></div>
+      </div>
+      <div class="sum-op" aria-hidden="true">+</div>
+      <div class="sum-cell">
+        <span>Top-up</span>
+        <div><em class="sum-val tnum" style="font-style:normal">10</em><em class="sum-unit" style="font-style:normal">h</em></div>
+      </div>
+      <div class="sum-op" aria-hidden="true">+</div>
+      <div class="sum-cell">
+        <span>Bonus</span>
+        <div><em class="sum-val tnum" style="font-style:normal">2</em><em class="sum-unit" style="font-style:normal">h</em></div>
+      </div>
+    </div>
+
+    <div class="meter-wrap">
+      <div class="meter-top">
+        <span>This month · <b>24 h of 80 h</b> used</span>
+        <span class="right">Resets 1 Nov</span>
+      </div>
+      <div class="meter"><i style="width:30%"></i></div>
+      <p class="meter-note">
+        At your current pace you will finish the month with about 20 h unused.
+        Nothing stops mid-stream: if you hit the ceiling while live, the session
+        finishes and the next one is blocked until you top up.
+      </p>
+    </div>
+
+    <div class="bar-actions">
+      <button class="btn btn-primary btn-sm" type="button" id="openTopup">Add hours</button>
+      <a class="btn btn-ghost btn-sm" href="index.html#pricing">Change plan</a>
+      <span class="spacer"></span>
+    </div>
+
+    <div class="tabs" role="tablist" aria-label="Hours history">
+      <button type="button" role="tab" aria-selected="true"  data-filter="all">All</button>
+      <button type="button" role="tab" aria-selected="false" data-filter="used">Used</button>
+      <button type="button" role="tab" aria-selected="false" data-filter="bought">Purchased</button>
+      <button type="button" role="tab" aria-selected="false" data-filter="granted">Granted</button>
+    </div>
+
+    <div class="ledger" id="ledger" role="tabpanel"></div>
+  </section>
+
+  <!-- ============================ BILLING ============================ -->
+  <section class="view" id="view-billing" hidden>
+    <div class="vhead">
+      <h1>Billing</h1>
+      <p>Your plan, what renews when, and every payment so far.</p>
+    </div>
+
+    <div class="tabs" role="tablist" aria-label="Billing sections">
+      <button type="button" role="tab" aria-selected="true"  data-pane="plan">Plan</button>
+      <button type="button" role="tab" aria-selected="false" data-pane="payments">Payments</button>
+    </div>
+
+    <div id="pane-plan" role="tabpanel" style="margin-top:18px">
+      <div class="pcard">
+        <div class="pcard-h">
+          <h2>Pro</h2>
+          <span class="tag-ok">Active</span>
+        </div>
+        <span class="pcard-x">Renews 1 Nov 2026 · 80 h per month · billed monthly</span>
+        <dl class="dl">
+          <div class="drow"><dt>Next billing amount</dt><dd>$9.00</dd></div>
+          <div class="drow sub"><dt>Subtotal</dt><dd>$9.00</dd></div>
+          <div class="drow sub"><dt>Tax</dt><dd>$0.00</dd></div>
+          <div class="drow"><dt>Billing method</dt><dd>Card ending 4242</dd></div>
+          <div class="drow"><dt>Next renewal</dt><dd>1 Nov 2026</dd></div>
+          <div class="drow total"><dt>Total due 1 Nov</dt><dd>$9.00</dd></div>
+        </dl>
+        <div class="bar-actions" style="margin-bottom:0">
+          <a class="btn btn-ghost btn-sm" href="index.html#pricing">Switch to annual · save 17%</a>
+          <button class="btn btn-ghost btn-sm" type="button" id="cancelPlan">Cancel plan</button>
+        </div>
+      </div>
+      <p class="meter-note" style="margin-top:14px">
+        Cancelling keeps the overlay you built and your remaining top-up hours.
+        The monthly allowance stops at the end of the period you have paid for.
+      </p>
+    </div>
+
+    <div id="pane-payments" role="tabpanel" hidden style="margin-top:18px">
+      <div class="ledger">
+        <div class="lrow">
+          <div>
+            <div class="lrow-t">Pro — monthly</div>
+            <div class="lrow-s">1 Oct 2026, 09:14 · card ending 4242</div>
+          </div>
+          <div>
+            <div class="lrow-v">$9.00</div>
+            <div class="lrow-x">Invoice</div>
+          </div>
+        </div>
+        <div class="lrow">
+          <div>
+            <div class="lrow-t">Top-up — 40 hours</div>
+            <div class="lrow-s">18 Sep 2026, 21:40 · card ending 4242</div>
+          </div>
+          <div>
+            <div class="lrow-v">$10.00</div>
+            <div class="lrow-x">Invoice</div>
+          </div>
+        </div>
+        <div class="lrow">
+          <div>
+            <div class="lrow-t">Pro — monthly</div>
+            <div class="lrow-s">1 Sep 2026, 09:14 · card ending 4242</div>
+          </div>
+          <div>
+            <div class="lrow-v">$9.00</div>
+            <div class="lrow-x">Invoice</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================ PROFILE ============================ -->
+  <section class="view" id="view-profile" hidden>
+    <div class="phead">
+      <div class="avatar" aria-hidden="true">DS</div>
+      <h1>Demo Streamer</h1>
+      <span class="handle">@demo_streamer</span>
+      <p class="pbio">Variety streamer. Mostly tactical shooters, occasionally a horror game I regret.</p>
+      <div class="stats">
+        <div class="stat"><b class="tnum">38</b><span>Streams</span></div>
+        <div class="stat"><b class="tnum">164</b><span>Hours on air</span></div>
+        <div class="stat"><b class="tnum">178</b><span>Peak bpm</span></div>
+        <div class="stat"><b class="tnum">12</b><span>Recaps shared</span></div>
+      </div>
+    </div>
+
+    <div class="pcards">
+      <div class="pc">
+        <div class="pc-h">Plan</div>
+        <div class="pc-v">Pro · 80 h</div>
+        <p>Renews 1 Nov 2026. Every overlay style and emote pack included.</p>
+      </div>
+      <div class="pc">
+        <div class="pc-h">Bonus hours</div>
+        <div class="pc-v tnum">2 h</div>
+        <p>Earned from finishing setup. Bonus hours expire 30 days after they land.</p>
+      </div>
+      <div class="pc">
+        <div class="pc-h">Referral</div>
+        <div class="pc-v tnum">0 h earned</div>
+        <p>Both of you get 5 hours when someone streams their first hour.</p>
+        <span class="code">SE-DEMO-4KQ2</span>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ============================ TOP-UP SHEET ============================ -->
+<div class="scrim" id="scrim" hidden>
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetTitle">
+    <div class="sheet-h">
+      <h2 id="sheetTitle">Add hours</h2>
+      <button class="xbtn" type="button" id="closeTopup" aria-label="Close">&times;</button>
+    </div>
+    <p>A one-off purchase, so your billing period is untouched.</p>
+
+    <div class="packs" role="radiogroup" aria-label="Hour packs">
+      <div class="pack" role="radio" tabindex="0" aria-checked="false" data-h="10" data-p="3">
+        <span class="pack-h">+10 h</span><span class="pack-p">$3</span><span class="pack-r mono">$0.30 / h</span>
+      </div>
+      <div class="pack" role="radio" tabindex="0" aria-checked="true" data-h="40" data-p="10">
+        <span class="pack-h">+40 h</span><span class="pack-p">$10</span><span class="pack-r mono">$0.25 / h</span>
+      </div>
+      <div class="pack" role="radio" tabindex="0" aria-checked="false" data-h="120" data-p="24">
+        <span class="pack-h">+120 h</span><span class="pack-p">$24</span><span class="pack-r mono">$0.20 / h</span>
+      </div>
+    </div>
+
+    <p class="sheet-note">
+      Top-up hours do not expire and carry into next month. They are spent only
+      after your monthly allowance runs out. On Pro your included rate is
+      $0.11/h — if you top up most months, annual Pro or Partner works out
+      cheaper.
+    </p>
+
+    <div class="sheet-foot">
+      <span class="total">Total <b class="tnum" id="sheetTotal">$10</b></span>
+      <button class="btn btn-primary btn-sm" type="button" id="buyTopup">Add 40 hours</button>
+    </div>
+    <p class="sheet-note" id="sheetResult" style="border-top:0;padding-top:12px;margin:0" hidden></p>
+  </div>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  /* ---------------- hash routing ----------------
+     Three views in one document. No framework: the landing page is vanilla
+     and this matches it. Unknown or empty hashes fall back to #usage. */
+  var VIEWS = ["usage", "billing", "profile"];
+  var links = Array.prototype.slice.call(document.querySelectorAll(".rail a[data-view]"));
+
+  function route() {
+    var want = (location.hash || "").replace("#", "");
+    if (VIEWS.indexOf(want) === -1) want = "usage";
+    VIEWS.forEach(function (v) {
+      document.getElementById("view-" + v).hidden = v !== want;
+    });
+    links.forEach(function (a) {
+      var on = a.getAttribute("href") === "#" + want;
+      if (on) { a.setAttribute("aria-current", "page"); }
+      else { a.removeAttribute("aria-current"); }
+    });
+    document.title = "StreamEmote — " + want.charAt(0).toUpperCase() + want.slice(1);
+  }
+  window.addEventListener("hashchange", function () {
+    /* A hash change does not reload, so an open sheet would otherwise sit on
+       top of whichever view you just switched to. */
+    if (scrim && !scrim.hidden) closeSheet();
+    if (typeof applySession === "function") applySession(); else route();
+  });
+
+  /* ---------------- hours ledger ----------------
+     One dataset, filtered by tab. Kinds map to the tabs: used / bought /
+     granted. Kling has a fifth "Transfer Out" tab; there is no transfer
+     feature here, so inventing the tab would imply one. */
+  var ENTRIES = [
+    { kind: "granted", title: "Monthly allowance",      sub: "1 Oct 2026, 00:00",  amount: 80,    note: "Pro · resets monthly" },
+    { kind: "used",    title: "Stream — Valorant",      sub: "4 Oct 2026, 20:12",  amount: -4.2,  note: "4 h 12 m on air" },
+    { kind: "used",    title: "Stream — Phasmophobia",  sub: "3 Oct 2026, 22:03",  amount: -2.8,  note: "2 h 48 m on air" },
+    { kind: "granted", title: "Bonus hours — setup",    sub: "2 Oct 2026, 14:20",  amount: 2,     note: "Expires 1 Nov", pill: "Expiring soon" },
+    { kind: "used",    title: "Stream — Just chatting", sub: "2 Oct 2026, 19:40",  amount: -1.5,  note: "1 h 30 m on air" },
+    { kind: "bought",  title: "Top-up — 40 hours",      sub: "18 Sep 2026, 21:40", amount: 40,    note: "Does not expire" },
+    { kind: "used",    title: "Stream — Valorant",      sub: "17 Sep 2026, 21:15", amount: -5.1,  note: "5 h 06 m on air" },
+    { kind: "used",    title: "Stream — Elden Ring",    sub: "15 Sep 2026, 18:02", amount: -10.4, note: "10 h 24 m on air" }
+  ];
+
+  var ledger = document.getElementById("ledger");
+
+  function fmt(h) {
+    var s = (Math.round(h * 10) / 10).toFixed(1).replace(/\.0$/, "");
+    return (h > 0 ? "+" : "") + s + " h";
+  }
+
+  function render(filter) {
+    var rows = ENTRIES.filter(function (e) { return filter === "all" || e.kind === filter; });
+    if (!rows.length) {
+      ledger.innerHTML =
+        '<div class="empty"><strong>Nothing here yet</strong>' +
+        "Hours you buy will show up in this tab.</div>";
+      return;
+    }
+    ledger.innerHTML = rows.map(function (e) {
+      return '<div class="lrow"><div><div class="lrow-t">' + e.title +
+        (e.pill ? ' <span class="pill">' + e.pill + "</span>" : "") +
+        '</div><div class="lrow-s">' + e.sub + "</div></div>" +
+        '<div><div class="lrow-v ' + (e.amount > 0 ? "pos" : "neg") + ' tnum">' +
+        fmt(e.amount) + '</div><div class="lrow-x">' + e.note + "</div></div></div>";
+    }).join("");
+  }
+  render("all");
+
+  /* ---------------- tab rows ----------------
+     Shared handler: a tablist either filters the ledger (data-filter) or
+     swaps a pane (data-pane). */
+  Array.prototype.forEach.call(document.querySelectorAll('[role="tablist"]'), function (list) {
+    var tabs = Array.prototype.slice.call(list.querySelectorAll('[role="tab"]'));
+    list.addEventListener("click", function (ev) {
+      var btn = ev.target.closest('[role="tab"]');
+      if (!btn) return;
+      tabs.forEach(function (t) { t.setAttribute("aria-selected", String(t === btn)); });
+      if (btn.dataset.filter) render(btn.dataset.filter);
+      if (btn.dataset.pane) {
+        tabs.forEach(function (t) {
+          document.getElementById("pane-" + t.dataset.pane).hidden = t !== btn;
+        });
+      }
+    });
+  });
+
+  /* ---------------- top-up sheet ---------------- */
+  var scrim = document.getElementById("scrim");
+  var buy = document.getElementById("buyTopup");
+  var totalEl = document.getElementById("sheetTotal");
+  var result = document.getElementById("sheetResult");
+  var packs = Array.prototype.slice.call(document.querySelectorAll(".pack"));
+  var lastFocus = null;
+
+  function selected() {
+    return packs.filter(function (p) { return p.getAttribute("aria-checked") === "true"; })[0] || packs[1];
+  }
+  function syncSheet() {
+    var p = selected();
+    totalEl.textContent = "$" + p.dataset.p;
+    buy.textContent = "Add " + p.dataset.h + " hours";
+  }
+  function pick(p) {
+    packs.forEach(function (q) { q.setAttribute("aria-checked", String(q === p)); });
+    syncSheet();
+  }
+  packs.forEach(function (p) {
+    p.addEventListener("click", function () { pick(p); });
+    p.addEventListener("keydown", function (ev) {
+      if (ev.key === " " || ev.key === "Enter") { ev.preventDefault(); pick(p); }
+    });
+  });
+
+  function openSheet() {
+    lastFocus = document.activeElement;
+    result.hidden = true;
+    scrim.hidden = false;
+    syncSheet();
+    document.getElementById("closeTopup").focus();
+  }
+  function closeSheet() {
+    scrim.hidden = true;
+    if (lastFocus) lastFocus.focus();
+  }
+  document.getElementById("openTopup").addEventListener("click", openSheet);
+  document.getElementById("closeTopup").addEventListener("click", closeSheet);
+  scrim.addEventListener("click", function (ev) { if (ev.target === scrim) closeSheet(); });
+  document.addEventListener("keydown", function (ev) {
+    if (ev.key === "Escape" && !scrim.hidden) closeSheet();
+  });
+
+  /* Nothing is charged. There is no payment integration behind this, and a
+     button that looked like it took money would be a lie in a public repo. */
+  buy.addEventListener("click", function () {
+    var p = selected();
+    result.hidden = false;
+    result.textContent =
+      "Prototype — nothing was charged. A real purchase of " + p.dataset.h +
+      " hours for $" + p.dataset.p + " would hand off to the payment provider here.";
+  });
+
+  /* ---------------- simulated session ----------------
+     Same localStorage key index.html reads. This is a visibility mechanism,
+     not a security one: the gate is client-side and anyone can press the demo
+     button, which the gate says plainly. Reads are guarded because
+     localStorage throws in a private window. */
+  var SESSION_KEY = "se.demo.session";
+  var gate = document.getElementById("gate");
+  var banner = document.getElementById("protoBanner");
+  var outBtn = document.getElementById("signOut");
+
+  function signedIn() {
+    try { return localStorage.getItem(SESSION_KEY) === "1"; }
+    catch (err) { return false; }
+  }
+  function setSession(on) {
+    try { on ? localStorage.setItem(SESSION_KEY, "1") : localStorage.removeItem(SESSION_KEY); }
+    catch (err) { /* private window — the state just will not persist */ }
+  }
+
+  function applySession() {
+    var on = signedIn();
+    gate.hidden = on;
+    banner.hidden = !on;
+    outBtn.hidden = !on;
+    document.getElementById("rail").hidden = !on;
+    if (on) {
+      route();
+    } else {
+      VIEWS.forEach(function (v) { document.getElementById("view-" + v).hidden = true; });
+      if (!scrim.hidden) closeSheet();
+      document.title = "StreamEmote — Sign in";
+    }
+  }
+
+  document.getElementById("doSignIn").addEventListener("click", function () {
+    setSession(true);
+    if (!location.hash) location.hash = "#usage";
+    applySession();
+  });
+  outBtn.addEventListener("click", function () {
+    setSession(false);
+    location.href = "index.html";
+  });
+
+  applySession();
+
+  document.getElementById("cancelPlan").addEventListener("click", function () {
+    var note = document.createElement("p");
+    note.className = "meter-note";
+    note.textContent = "Prototype — nothing was cancelled. This is where the retention flow would run.";
+    this.parentNode.parentNode.appendChild(note);
+    this.disabled = true;
+  });
+})();
+</script>
+
+</body>
+</html>
