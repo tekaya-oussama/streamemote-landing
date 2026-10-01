@@ -247,6 +247,20 @@ a { color: inherit; }
 }
 .nav-links a { text-decoration: none; }
 .nav-links a:hover { color: var(--ink); }
+/* Signed out this is a quiet text link, so the bar keeps one primary action.
+   Signed in, the script swaps these classes for .btn and hides the download
+   CTA instead — see the session block at the end of the script.
+
+   It lives outside .nav-links on purpose, so it survives the 1000px rule that
+   hides the section anchors: reaching your account has to work on a phone. */
+.nav-login {
+  font-size: 14.5px;
+  font-weight: 500;
+  color: var(--ink-2);
+  text-decoration: none;
+  white-space: nowrap;
+}
+.nav-login:hover { color: var(--ink); }
 
 /* ============================================================
    BUTTONS
@@ -1581,7 +1595,8 @@ a { color: inherit; }
       <a href="#reactions">Reactions</a>
       <a href="#pricing">Pricing</a>
     </div>
-    <a class="btn btn-primary btn-sm" href="#pricing">Download plugin</a>
+    <a class="nav-login" id="navAccount" href="dashboard.html">Log in</a>
+    <a class="btn btn-primary btn-sm" id="navCta" href="#pricing">Download plugin</a>
   </div>
 </nav>
 
@@ -2760,6 +2775,39 @@ a { color: inherit; }
     form.style.display = "none";
     ok.classList.add("on");
   });
+
+  /* ---------------- simulated session ----------------
+     There is no auth and no backend. This reads a single localStorage flag so
+     the header can reflect a signed-in state, and dashboard.html reads the
+     same key. Access is NOT protected by it — anyone can open the dashboard
+     and press the demo button. It exists to make the state visible, not to
+     secure anything.
+
+     localStorage throws in a private window and can come back empty, so every
+     read is guarded and the signed-out label is the default. */
+  var SESSION_KEY = "se.demo.session";
+
+  function signedIn() {
+    try { return localStorage.getItem(SESSION_KEY) === "1"; }
+    catch (err) { return false; }
+  }
+
+  var account = document.getElementById("navAccount");
+  if (account && signedIn()) {
+    /* Signed in, the account link becomes the emphasised action and swaps the
+       text-link class for the button one. Signed out it stays a quiet text
+       link, so the label and the weight both follow the state. */
+    account.textContent = "Dashboard";
+    account.className = "btn btn-primary btn-sm";
+
+    /* Two primary buttons plus the lockup overflow the bar at phone width, and
+       "Download plugin" is redundant to someone already signed in, so it gives
+       way to Dashboard. Set as an inline style rather than the hidden
+       attribute: .btn carries an explicit display: inline-flex, which would
+       outrank the UA rule behind [hidden] and leave it on screen. */
+    var cta = document.getElementById("navCta");
+    if (cta) cta.style.display = "none";
+  }
 })();
 </script>
 </body>
