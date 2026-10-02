@@ -8,7 +8,7 @@
 <title>StreamEmote — Dashboard</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=Karla:wght@400;500;600&family=Martian+Mono:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Manrope:wght@400;500;600;700&family=Martian+Mono:wght@400;500;600&display=swap">
 <style>
 /* ============================================================
    This file duplicates the TOKENS, BASE and BUTTONS blocks from
@@ -20,138 +20,154 @@
 /* ============================================================
    TOKENS — dark-first. Bare :root is the dark palette; light is
    layered on top for prefers-color-scheme AND the explicit stamp.
+
+   Direction: an indigo night rather than near-black. Deep navy
+   ground, lifted panels, large soft radii, and three saturated
+   accents that are also the product's three signals — azure for
+   breathing, violet for the brand, coral for heart rate.
    ============================================================ */
 :root {
   color-scheme: dark;
 
-  --ground:      #0B0A10;
-  --ground-alt:  #100E18;
-  --panel:       #141220;
-  --panel-2:     #1B1828;
-  --line:        #241F36;
-  --line-soft:   #1B1728;
+  --ground:      #1D1E3F;
+  --ground-alt:  #191A37;
+  --panel:       #26284F;
+  --panel-2:     #2E3060;
+  --line:        #363968;
+  --line-soft:   #2D2F5C;
 
-  --ink:         #EDEAF6;
-  --ink-2:       #B4ACCB;
-  --ink-3:       #837B9C;
+  --ink:         #F3F3FF;
+  --ink-2:       #B3B5E0;
+  --ink-3:       #9A9CCC;
 
-  --brand:       #7C5CFF;
+  --brand:       #7B4BFF;
   --brand-ink:   #FFFFFF;
-  --brand-soft:  rgba(124, 92, 255, 0.14);
-  --brand-line:  rgba(124, 92, 255, 0.38);
+  --brand-soft:  rgba(123, 75, 255, 0.18);
+  --brand-line:  rgba(123, 75, 255, 0.50);
+  /* --brand fills buttons under white text, which needs it dark; text in the
+     brand colour on a panel needs it light. No single violet does both, so
+     text, data lines and state indicators use this lighter one. */
+  --brand-text:  #B39DFF;
 
-  --hr:          #FF5470;
-  --breath:      #4CC9F0;
-  --ok:          #34D8A0;
-  --warn:        #FFB43D;
-  --crit:        #FF5470;
+  --hr:          #FF5A72;
+  --breath:      #6E93FF;
+  --ok:          #34D07A;
+  --warn:        #F7A562;
+  --crit:        #FF5A72;
 
-  --hr-soft:     rgba(255, 84, 112, 0.13);
-  --breath-soft: rgba(76, 201, 240, 0.13);
-  --ok-soft:     rgba(52, 216, 160, 0.13);
-  --warn-soft:   rgba(255, 180, 61, 0.14);
+  --hr-soft:     rgba(255, 90, 114, 0.16);
+  --breath-soft: rgba(110, 147, 255, 0.16);
+  --ok-soft:     rgba(52, 208, 122, 0.15);
+  --warn-soft:   rgba(247, 165, 98, 0.16);
 
   /* emote packs — glyph colour + disc behind it */
-  --p-happy:     #F0B429;  --p-happy-bg:   rgba(240, 180, 41, 0.15);
-  --p-angry:     #FF5470;  --p-angry-bg:   rgba(255, 84, 112, 0.15);
-  --p-shocked:   #9B80FF;  --p-shocked-bg: rgba(124, 92, 255, 0.20);
-  --p-laughing:  #34D8A0;  --p-laughing-bg:rgba(52, 216, 160, 0.15);
-  --p-sad:       #4CC9F0;  --p-sad-bg:     rgba(76, 201, 240, 0.15);
+  --p-happy:     #F5C342;  --p-happy-bg:   rgba(245, 195, 66, 0.16);
+  --p-angry:     #FF5A72;  --p-angry-bg:   rgba(255, 90, 114, 0.16);
+  --p-shocked:   #A586FF;  --p-shocked-bg: rgba(123, 75, 255, 0.22);
+  --p-laughing:  #34D07A;  --p-laughing-bg:rgba(52, 208, 122, 0.16);
+  --p-sad:       #4F7CFF;  --p-sad-bg:     rgba(79, 124, 255, 0.18);
 
-  --stage:       #08070C;
-  --stage-grid:  rgba(124, 92, 255, 0.07);
-  --shadow:      0 1px 2px rgba(0,0,0,.5), 0 18px 44px -20px rgba(0,0,0,.8);
+  --stage:       #15162E;
+  --stage-grid:  rgba(123, 75, 255, 0.09);
+  /* Text on the demo stage. Same in every palette: the stage stays
+     dark in light theme too, so --ink would vanish against it. */
+  --stage-ink:   #F3F3FF;
+  --shadow:      0 1px 2px rgba(6,6,20,.45), 0 22px 50px -24px rgba(6,6,24,.85);
 
-  --fd: "Archivo", "Helvetica Neue", Arial, sans-serif;
-  --fb: "Karla", "Helvetica Neue", Arial, sans-serif;
+  --fd: "Outfit", "Helvetica Neue", Arial, sans-serif;
+  --fb: "Manrope", "Helvetica Neue", Arial, sans-serif;
   --fm: "Martian Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
 
   --wrap: 1180px;
-  --r-sm: 6px;
-  --r-md: 10px;
-  --r-lg: 16px;
+  --r-sm: 12px;
+  --r-md: 16px;
+  --r-lg: 24px;
 }
 
 @media (prefers-color-scheme: light) {
   :root:not([data-theme="dark"]) {
     color-scheme: light;
-    --ground:      #F7F6FB;
+    --ground:      #F3F3FB;
     --ground-alt:  #FFFFFF;
     --panel:       #FFFFFF;
-    --panel-2:     #F2F0F9;
-    --line:        #E1DDF0;
-    --line-soft:   #EBE8F5;
+    --panel-2:     #EDEDF8;
+    --line:        #DCDDF0;
+    --line-soft:   #E7E7F5;
 
-    --ink:         #16121F;
-    --ink-2:       #4E4763;
-    --ink-3:       #6F678A;
+    --ink:         #1B1C3D;
+    --ink-2:       #4B4D7A;
+    --ink-3:       #63659A;
 
-    --brand:       #5B3EE8;
+    --brand:       #6A36F0;
     --brand-ink:   #FFFFFF;
-    --brand-soft:  rgba(91, 62, 232, 0.09);
-    --brand-line:  rgba(91, 62, 232, 0.28);
+    --brand-soft:  rgba(106, 54, 240, 0.10);
+    --brand-line:  rgba(106, 54, 240, 0.32);
+    --brand-text:  #6A36F0;
 
-    --hr:          #D4234A;
-    --breath:      #0B7FAE;
-    --ok:          #0B8F66;
-    --warn:        #9A6100;
-    --crit:        #D4234A;
+    --hr:          #C93450;
+    --breath:      #2F5FF0;
+    --ok:          #0B7A48;
+    --warn:        #8F4C06;
+    --crit:        #C93450;
 
-    --hr-soft:     rgba(212, 35, 74, 0.09);
-    --breath-soft: rgba(11, 127, 174, 0.09);
-    --ok-soft:     rgba(11, 143, 102, 0.09);
-    --warn-soft:   rgba(154, 97, 0, 0.10);
+    --hr-soft:     rgba(201, 52, 80, 0.10);
+    --breath-soft: rgba(47, 95, 240, 0.10);
+    --ok-soft:     rgba(11, 122, 72, 0.10);
+    --warn-soft:   rgba(143, 76, 6, 0.11);
 
     --p-happy:     #A97605;  --p-happy-bg:   #FDF1CE;
-    --p-angry:     #D4234A;  --p-angry-bg:   #FBE2E5;
-    --p-shocked:   #5B3EE8;  --p-shocked-bg: #E8E3FD;
-    --p-laughing:  #0B8F66;  --p-laughing-bg:#DBF4E7;
-    --p-sad:       #0B7FAE;  --p-sad-bg:     #DEEDFA;
+    --p-angry:     #E0405C;  --p-angry-bg:   #FCE3E8;
+    --p-shocked:   #6A36F0;  --p-shocked-bg: #ECE5FE;
+    --p-laughing:  #11965A;  --p-laughing-bg:#DCF5E8;
+    --p-sad:       #2F5FF0;  --p-sad-bg:     #E2EAFE;
 
-    --stage:       #14111C;
-    --stage-grid:  rgba(124, 92, 255, 0.10);
-    --shadow:      0 1px 2px rgba(22,18,31,.06), 0 16px 40px -22px rgba(22,18,31,.28);
+    --stage:       #1B1C3D;
+    --stage-grid:  rgba(106, 54, 240, 0.12);
+    --stage-ink:   #F3F3FF;
+    --shadow:      0 1px 2px rgba(27,28,61,.06), 0 18px 44px -24px rgba(27,28,61,.30);
   }
 }
 
 :root[data-theme="light"] {
   color-scheme: light;
-  --ground:      #F7F6FB;
+  --ground:      #F3F3FB;
   --ground-alt:  #FFFFFF;
   --panel:       #FFFFFF;
-  --panel-2:     #F2F0F9;
-  --line:        #E1DDF0;
-  --line-soft:   #EBE8F5;
+  --panel-2:     #EDEDF8;
+  --line:        #DCDDF0;
+  --line-soft:   #E7E7F5;
 
-  --ink:         #16121F;
-  --ink-2:       #4E4763;
-  --ink-3:       #6F678A;
+  --ink:         #1B1C3D;
+  --ink-2:       #4B4D7A;
+  --ink-3:       #63659A;
 
-  --brand:       #5B3EE8;
+  --brand:       #6A36F0;
   --brand-ink:   #FFFFFF;
-  --brand-soft:  rgba(91, 62, 232, 0.09);
-  --brand-line:  rgba(91, 62, 232, 0.28);
+  --brand-soft:  rgba(106, 54, 240, 0.10);
+  --brand-line:  rgba(106, 54, 240, 0.32);
+  --brand-text:  #6A36F0;
 
-  --hr:          #D4234A;
-  --breath:      #0B7FAE;
-  --ok:          #0B8F66;
-  --warn:        #9A6100;
-  --crit:        #D4234A;
+  --hr:          #C93450;
+  --breath:      #2F5FF0;
+  --ok:          #0B7A48;
+  --warn:        #8F4C06;
+  --crit:        #C93450;
 
-  --hr-soft:     rgba(212, 35, 74, 0.09);
-  --breath-soft: rgba(11, 127, 174, 0.09);
-  --ok-soft:     rgba(11, 143, 102, 0.09);
-  --warn-soft:   rgba(154, 97, 0, 0.10);
+  --hr-soft:     rgba(201, 52, 80, 0.10);
+  --breath-soft: rgba(47, 95, 240, 0.10);
+  --ok-soft:     rgba(11, 122, 72, 0.10);
+  --warn-soft:   rgba(143, 76, 6, 0.11);
 
   --p-happy:     #A97605;  --p-happy-bg:   #FDF1CE;
-  --p-angry:     #D4234A;  --p-angry-bg:   #FBE2E5;
-  --p-shocked:   #5B3EE8;  --p-shocked-bg: #E8E3FD;
-  --p-laughing:  #0B8F66;  --p-laughing-bg:#DBF4E7;
-  --p-sad:       #0B7FAE;  --p-sad-bg:     #DEEDFA;
+  --p-angry:     #E0405C;  --p-angry-bg:   #FCE3E8;
+  --p-shocked:   #6A36F0;  --p-shocked-bg: #ECE5FE;
+  --p-laughing:  #11965A;  --p-laughing-bg:#DCF5E8;
+  --p-sad:       #2F5FF0;  --p-sad-bg:     #E2EAFE;
 
-  --stage:       #14111C;
-  --stage-grid:  rgba(124, 92, 255, 0.10);
-  --shadow:      0 1px 2px rgba(22,18,31,.06), 0 16px 40px -22px rgba(22,18,31,.28);
+  --stage:       #1B1C3D;
+  --stage-grid:  rgba(106, 54, 240, 0.12);
+  --stage-ink:   #F3F3FF;
+  --shadow:      0 1px 2px rgba(27,28,61,.06), 0 18px 44px -24px rgba(27,28,61,.30);
 }
 
 /* ============================================================
@@ -182,7 +198,7 @@ p { margin: 0; }
 a { color: inherit; }
 
 :focus-visible {
-  outline: 2px solid var(--brand);
+  outline: 2px solid var(--brand-text);
   outline-offset: 3px;
   border-radius: 3px;
 }
@@ -234,13 +250,41 @@ a { color: inherit; }
   border-color: var(--line);
 }
 .btn-ghost:hover { border-color: var(--brand-line); background: var(--brand-soft); }
+
+/* Hover ring. The outline turns into a rotating gradient of the three signal
+   colours plus the warm accent: the RGB-peripheral idiom streamers already read
+   as "live". It is a masked ::after over the border, so it costs no layout and
+   never covers the label. .ring opts any other outlined control into the same
+   treatment. Hover and motion are switched on in each file's RESPONSIVE block,
+   so touch screens and reduced-motion users are handled there. */
+@property --ring { syntax: "<angle>"; inherits: false; initial-value: 0deg; }
+@keyframes ring-spin { to { --ring: 360deg; } }
+.btn-ghost, .ring { position: relative; isolation: isolate; }
+.btn-ghost::after, .ring::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  padding: 2px;
+  border-radius: inherit;
+  --ring: 0deg; /* fallback where @property is unsupported: static, still visible */
+  background: conic-gradient(from var(--ring), var(--breath), var(--brand-text), var(--hr), var(--warn), var(--breath));
+  -webkit-mask: linear-gradient(var(--ink) 0 0) content-box, linear-gradient(var(--ink) 0 0);
+  -webkit-mask-composite: xor;
+          mask: linear-gradient(var(--ink) 0 0) content-box, linear-gradient(var(--ink) 0 0);
+          mask-composite: exclude;
+  opacity: 0;
+  transition: opacity .2s ease;
+  pointer-events: none;
+}
+.btn-ghost:focus-visible::after, .ring:focus-visible::after { opacity: 1; }
 .btn-sm { font-size: 14px; padding: 8px 15px; }
 
 
 /* ============================================================
    DASHBOARD SHELL
    ============================================================ */
-:root { --wrap: 1120px; }
+/* Wider than the landing page: three columns need the room. */
+:root { --wrap: 1440px; }
 
 .dnav {
   position: sticky;
@@ -314,7 +358,7 @@ body { padding-left: var(--rail); }
   text-transform: uppercase;
 }
 .rail a:hover { color: var(--ink); background: var(--panel-2); }
-.rail a[aria-current="page"] { color: var(--brand); background: var(--brand-soft); }
+.rail a[aria-current="page"] { color: var(--brand-text); background: var(--brand-soft); }
 .rail a[aria-current="page"] svg { stroke-width: 2; }
 
 /* The avatar is a second route into #profile, so it is excluded from the
@@ -333,12 +377,9 @@ body { padding-left: var(--rail); }
   font-size: 12px !important;
   letter-spacing: 0 !important;
   text-transform: none !important;
-  color: var(--brand);
+  color: var(--brand-text);
 }
-/* The push lives on the wrapper, not on either child: Sign out is hidden when
-   signed out, so putting it on a child would lose the push in one state. */
 .dnav-end { margin-left: auto; display: flex; align-items: center; gap: 16px; }
-.dback { font-size: 14px; color: var(--ink-3); text-decoration: none; white-space: nowrap; }
 .dback:hover { color: var(--ink); }
 
 .dmain { max-width: var(--wrap); margin-inline: auto; padding: 36px 28px 72px; }
@@ -354,32 +395,7 @@ body { padding-left: var(--rail); }
 /* ============================================================
    USAGE — the hours ledger
    ============================================================ */
-.sum {
-  display: grid;
-  grid-template-columns: minmax(0,1.15fr) 18px minmax(0,1fr) 18px minmax(0,1fr) 18px minmax(0,1fr);
-  align-items: center;
-  gap: 0 10px;
-  border: 1px solid var(--line);
-  border-radius: var(--r-lg);
-  background: var(--panel);
-  padding: 22px 24px;
-}
-.sum-op { font-family: var(--fd); font-size: 19px; color: var(--ink-3); text-align: center; }
-.sum-cell > span {
-  display: block;
-  font-family: var(--fm);
-  font-size: 9.5px;
-  font-weight: 600;
-  letter-spacing: .1em;
-  text-transform: uppercase;
-  color: var(--ink-3);
-  margin-bottom: 7px;
-}
-.sum-val { font-family: var(--fd); font-weight: 800; font-size: 34px; letter-spacing: -.03em; line-height: 1; }
-.sum-cell.lead .sum-val { color: var(--brand); font-size: 40px; }
-.sum-unit { font-family: var(--fm); font-size: 11px; font-weight: 500; color: var(--ink-3); margin-left: 4px; }
-
-.meter-wrap { margin-top: 16px; }
+.meter-wrap { margin-top: 18px; }
 .meter-top {
   display: flex;
   align-items: baseline;
@@ -429,7 +445,7 @@ body { padding-left: var(--rail); }
   white-space: nowrap;
 }
 .tabs button:hover { color: var(--ink); }
-.tabs button[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--brand); font-weight: 600; }
+.tabs button[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--brand-text); font-weight: 600; }
 
 .ledger { border: 1px solid var(--line); border-radius: var(--r-lg); background: var(--panel); margin-top: 16px; }
 .lrow {
@@ -463,56 +479,22 @@ body { padding-left: var(--rail); }
 /* ============================================================
    BILLING
    ============================================================ */
-.pcard { border: 1px solid var(--brand-line); border-radius: var(--r-lg); background: var(--panel); padding: 22px 24px; box-shadow: var(--shadow); }
-.pcard-h { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; flex-wrap: wrap; }
-.pcard-h h2 { font-size: 21px; }
 .tag-ok { font-family: var(--fm); font-size: 8.5px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; padding: 3px 7px; border-radius: 3px; background: var(--ok-soft); color: var(--ok); }
-.pcard-x { font-family: var(--fm); font-size: 10.5px; color: var(--ink-3); letter-spacing: .03em; }
 .drow { display: flex; align-items: baseline; gap: 12px; padding: 11px 0; border-bottom: 1px solid var(--line-soft); font-size: 14.5px; }
 .drow:last-of-type { border-bottom: 0; }
 .drow dt { color: var(--ink-3); }
 .drow dd { margin: 0 0 0 auto; font-family: var(--fm); font-size: 13px; color: var(--ink); text-align: right; }
-.drow.sub { padding-left: 18px; }
-.drow.sub dt, .drow.sub dd { color: var(--ink-3); font-size: 12.5px; }
-.drow.total dd { font-family: var(--fd); font-weight: 700; font-size: 17px; }
 .dl { margin: 18px 0 0; }
 
 /* ============================================================
    PROFILE
    ============================================================ */
-.phead {
-  border: 1px solid var(--line);
-  border-radius: var(--r-lg);
-  background: var(--panel);
-  padding: 30px 24px 24px;
-  text-align: center;
-  margin-bottom: 18px;
-}
-.avatar {
-  width: 72px; height: 72px;
-  border-radius: 99px;
-  margin: 0 auto 14px;
-  background: var(--brand-soft);
-  border: 1px solid var(--brand-line);
-  display: grid;
-  place-items: center;
-  font-family: var(--fd);
-  font-weight: 800;
-  font-size: 26px;
-  color: var(--brand);
-}
-.phead h1 { font-size: 26px; margin-bottom: 6px; }
 .handle { font-family: var(--fm); font-size: 11px; color: var(--ink-3); letter-spacing: .06em; }
 .pbio { color: var(--ink-2); margin: 12px auto 0; max-width: 46ch; }
-.stats { display: flex; justify-content: center; gap: 36px; margin-top: 22px; flex-wrap: wrap; }
-.stat { text-align: center; }
-.stat b { display: block; font-family: var(--fd); font-weight: 800; font-size: 22px; }
-.stat span { font-family: var(--fm); font-size: 9px; font-weight: 600; letter-spacing: .11em; text-transform: uppercase; color: var(--ink-3); }
 .pcards { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 14px; }
-.pc { border: 1px solid var(--line); border-radius: var(--r-lg); background: var(--panel); padding: 18px 20px; }
 .pc-h { font-family: var(--fm); font-size: 9.5px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 10px; }
 .pc-v { font-family: var(--fd); font-weight: 700; font-size: 19px; margin-bottom: 5px; }
-.pc p { font-size: 13.5px; color: var(--ink-3); margin: 0; }
+.pcards p { font-size: 13.5px; color: var(--ink-3); margin: 0; }
 .code { font-family: var(--fm); font-size: 13px; color: var(--ink); background: var(--panel-2); border: 1px solid var(--line-soft); border-radius: var(--r-sm); padding: 7px 10px; display: inline-block; margin-top: 4px; }
 
 /* ============================================================
@@ -569,7 +551,7 @@ body { padding-left: var(--rail); }
   text-align: center;
 }
 .pack:hover { border-color: var(--brand-line); }
-.pack[aria-checked="true"] { border-color: var(--brand); background: var(--brand-soft); box-shadow: var(--shadow); }
+.pack[aria-checked="true"] { border-color: var(--brand-text); background: var(--brand-soft); box-shadow: var(--shadow); }
 .pack-h { font-family: var(--fd); font-weight: 700; font-size: 20px; letter-spacing: -.02em; line-height: 1; }
 .pack-p { font-size: 15px; color: var(--ink-2); }
 .pack-r { font-family: var(--fm); font-size: 9px; font-weight: 500; letter-spacing: .06em; color: var(--ink-3); }
@@ -594,20 +576,6 @@ body { padding-left: var(--rail); }
 .gate .btn { width: 100%; justify-content: center; }
 .gate-note { font-size: 12.5px; color: var(--ink-3); margin: 16px 0 0; }
 
-.proto {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  border: 1px solid var(--warn-soft);
-  border-left: 3px solid var(--warn);
-  border-radius: var(--r-sm);
-  background: var(--warn-soft);
-  padding: 9px 13px;
-  margin-bottom: 22px;
-  font-size: 13px;
-  color: var(--ink-2);
-}
-.proto b { color: var(--ink); }
 .dsignout {
   font-family: var(--fm);
   font-size: 10px;
@@ -625,12 +593,318 @@ body { padding-left: var(--rail); }
 .dsignout:hover { color: var(--ink); border-color: var(--brand-line); background: var(--brand-soft); }
 
 /* ============================================================
+   HEADER CLUSTER — balance, account, prototype marker
+   ============================================================ */
+.dnav-end { margin-left: auto; display: flex; align-items: center; gap: 14px; }
+.pchip {
+  font-family: var(--fm);
+  font-size: 8.5px;
+  font-weight: 600;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--warn);
+  background: var(--warn-soft);
+  border-radius: 99px;
+  padding: 4px 9px;
+  cursor: help;
+}
+.bal {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 14px;
+  border-radius: var(--r-sm);
+  background: var(--panel);
+  border: 1px solid var(--line-soft);
+  color: var(--breath);
+}
+.bal b { font-family: var(--fd); font-weight: 700; font-size: 17px; color: var(--ink); }
+.bal em { font-style: normal; font-size: 13px; color: var(--ink-3); }
+.who { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; color: var(--ink); }
+.who-av, .last-av {
+  width: 38px; height: 38px;
+  border-radius: 99px;
+  display: grid;
+  place-items: center;
+  font-family: var(--fd);
+  font-weight: 800;
+  font-size: 14px;
+  color: var(--brand-ink);
+  background: linear-gradient(140deg, var(--hr), var(--brand));
+  flex: none;
+}
+.who-name { font-weight: 600; font-size: 14.5px; white-space: nowrap; }
+
+/* ============================================================
+   HOURS — three columns, after the reference layout
+   ============================================================ */
+.hours-grid {
+  display: grid;
+  grid-template-columns: minmax(0, .92fr) minmax(0, 1.62fr) minmax(0, .96fr);
+  gap: 22px;
+  align-items: start;
+}
+.col { display: grid; gap: 20px; align-content: start; }
+.card {
+  background: var(--panel);
+  border-radius: var(--r-lg);
+  padding: 20px;
+  border: 1px solid var(--line-soft);
+}
+.card-h {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin-bottom: 14px;
+  font-family: var(--fd);
+  font-weight: 600;
+  font-size: 17px;
+  color: var(--ink-2);
+}
+.card-h > :last-child { margin-left: auto; }
+.card-h b { font-weight: 700; color: var(--ink); font-size: 20px; }
+.card-h em { font-style: normal; font-family: var(--fb); font-weight: 500; font-size: 12.5px; color: var(--ink-3); }
+.card-h a { font-family: var(--fb); font-size: 13px; font-weight: 600; color: var(--breath); text-decoration: none; }
+.card-h a:hover { text-decoration: underline; }
+
+/* chart */
+.chart { display: block; width: 100%; height: auto; overflow: visible; }
+.chart .grid line { stroke: var(--line-soft); stroke-width: 1; }
+.chart .ylab { font-family: var(--fm); font-size: 8.5px; fill: var(--ink-3); }
+.chart .cap { stroke: var(--ink-3); stroke-width: 1.2; stroke-dasharray: 3 4; }
+.chart .caplab { font-family: var(--fm); font-size: 8.5px; fill: var(--ink-3); }
+.chart .area { fill: var(--brand-soft); }
+.chart .line { fill: none; stroke: var(--brand-text); stroke-width: 2.4; stroke-linejoin: round; stroke-linecap: round; }
+.chart .proj { fill: none; stroke: var(--brand-text); stroke-width: 1.8; stroke-dasharray: 4 5; opacity: .7; }
+.chart .dot { fill: var(--brand-text); stroke: var(--panel); stroke-width: 3; }
+.chart .endlab { font-family: var(--fd); font-weight: 700; font-size: 15px; fill: var(--ink); }
+.chart-key { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 10px; font-size: 12px; color: var(--ink-3); }
+.chart-key span { display: inline-flex; align-items: center; gap: 6px; }
+.chart-key i { width: 16px; height: 0; border-top: 2.4px solid var(--brand-text); display: inline-block; }
+.chart-key i.k-proj { border-top-style: dashed; border-top-width: 1.8px; opacity: .7; }
+.chart-key i.k-cap { border-top: 1.2px dashed var(--ink-3); }
+
+/* session pills — the reference's multiplier chips, carrying real meaning:
+   colour is the session's peak state */
+.spills { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+.spill {
+  border: 1.6px solid var(--line);
+  border-radius: var(--r-sm);
+  padding: 11px 4px;
+  text-align: center;
+  font-family: var(--fd);
+  font-weight: 600;
+  font-size: 15px;
+  color: var(--ink);
+  background: var(--ground-alt);
+}
+.spill small { display: block; font-family: var(--fb); font-weight: 500; font-size: 10.5px; color: var(--ink-3); margin-top: 3px; }
+.spill.s-calm   { border-color: var(--breath); }
+.spill.s-clutch { border-color: var(--warn); }
+.spill.s-rage   { border-color: var(--hr); }
+.spill { cursor: pointer; transition: box-shadow .2s, transform .2s; }
+.spill:active { transform: translateY(1px); }
+.srow.flash { animation: row-flash 1.8s ease-out; }
+@keyframes row-flash {
+  0%, 35% { box-shadow: 0 0 0 2px var(--brand-text); background: var(--brand-soft); }
+  100%    { box-shadow: 0 0 0 2px transparent; }
+}
+.plegend { display: flex; gap: 14px; margin-top: 12px; font-size: 12px; color: var(--ink-3); }
+.plegend span { display: inline-flex; align-items: center; gap: 6px; }
+.plegend i { width: 9px; height: 9px; border-radius: 99px; display: inline-block; }
+.plegend i.s-calm   { background: var(--breath); }
+.plegend i.s-clutch { background: var(--warn); }
+.plegend i.s-rage   { background: var(--hr); }
+
+/* last stream */
+.last-top { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+.last-top b { display: block; font-family: var(--fd); font-size: 18px; font-weight: 700; }
+.mini { display: block; font-size: 12.5px; color: var(--ink-3); }
+.last-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+.last-stats b { display: block; font-family: var(--fd); font-weight: 700; font-size: 19px; }
+.last-stats span { font-size: 12px; color: var(--ink-3); }
+
+/* information */
+.info-row { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+.info-num b { display: block; font-family: var(--fd); font-weight: 700; font-size: 38px; letter-spacing: -.02em; line-height: 1.05; }
+.info-num span { font-size: 12.5px; color: var(--ink-3); }
+.info-num.lead b { color: var(--brand-text); }
+.info-arrow { font-family: var(--fd); font-size: 30px; color: var(--breath); line-height: 1; }
+.info-actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: 16px; }
+.xchip {
+  font-size: 13px;
+  font-weight: 600;
+  padding: 9px 14px;
+  border-radius: var(--r-sm);
+  background: var(--ground-alt);
+  color: var(--ink-2);
+}
+.btn.accent { border-color: var(--breath); color: var(--breath); }
+.btn.accent:hover { background: var(--breath-soft); border-color: var(--breath); }
+
+/* accent cards — saturated, with a chunky glyph breaking out of the top edge */
+.acards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; padding-top: 30px; }
+.acard {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  min-height: 196px;
+  padding: 90px 16px 18px;
+  border: 0;
+  border-radius: var(--r-lg);
+  font: inherit;
+  text-align: left;
+  color: var(--brand-ink);
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform .18s, box-shadow .18s;
+}
+.acard:hover { transform: translateY(-3px); }
+.acard span { font-weight: 600; font-size: 13.5px; line-height: 1.4; position: relative; }
+/* Light at the top where the glyph sits, deepened at the bottom where the text
+   sits. White on the flat accent fails AA on coral (3.0:1 in dark theme); mixing
+   toward --stage — the one token that is dark in BOTH themes — brings every
+   card, both themes, to at least 4.9:1 under the text. */
+.a-breath { background: linear-gradient(to bottom, color-mix(in srgb, var(--breath) 72%, var(--brand-ink)) 0%, var(--breath) 38%, color-mix(in srgb, var(--breath) 72%, var(--stage)) 72%); box-shadow: 0 18px 34px -18px var(--breath); }
+.a-brand  { background: linear-gradient(to bottom, color-mix(in srgb, var(--brand) 72%, var(--brand-ink)) 0%, var(--brand) 38%, color-mix(in srgb, var(--brand) 72%, var(--stage)) 72%); box-shadow: 0 18px 34px -18px var(--brand); }
+.a-hr     { background: linear-gradient(to bottom, color-mix(in srgb, var(--hr) 72%, var(--brand-ink)) 0%, var(--hr) 38%, color-mix(in srgb, var(--hr) 72%, var(--stage)) 72%); box-shadow: 0 18px 34px -18px var(--hr); }
+.aglyph {
+  position: absolute;
+  left: 50%;
+  top: -30px;
+  width: 104px;
+  height: 104px;
+  transform: translateX(-50%) rotate(-9deg);
+  filter: drop-shadow(0 16px 18px rgba(10, 8, 40, .32));
+  transition: transform .25s;
+}
+.acard:hover .aglyph { transform: translateX(-50%) rotate(-3deg) scale(1.04); }
+.aglyph .g-depth { fill: rgba(10, 8, 40, .26); }
+.aglyph .g-face  { fill: rgba(255, 255, 255, .46); }
+.acard-go { position: absolute; right: 16px; bottom: 16px; font-style: normal; font-size: 16px; opacity: .8; }
+.a-brand span { padding-right: 18px; }
+
+/* history */
+.hist-h { flex-wrap: wrap; }
+.hist-sum { font-family: var(--fb); font-size: 12.5px; font-weight: 500; color: var(--ink-3); }
+.hist-sum b { font-size: 13.5px !important; margin-left: 8px; color: var(--ink-2) !important; }
+.srows { display: grid; gap: 10px; margin-top: 14px; }
+.srow {
+  display: grid;
+  grid-template-columns: 42px minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 14px;
+  border-radius: var(--r-md);
+  background: var(--ground-alt);
+}
+.sav { width: 42px; height: 42px; border-radius: 99px; display: grid; place-items: center; }
+.sav.k-used    { background: var(--hr-soft);     color: var(--hr); }
+.sav.k-bought  { background: var(--brand-soft);  color: var(--brand-text); }
+.sav.k-granted { background: var(--breath-soft); color: var(--breath); }
+.st { font-weight: 600; color: var(--ink); display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.ss { font-size: 12px; color: var(--ink-3); margin-top: 2px; }
+.kpill {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: var(--r-sm);
+  border: 1.4px solid var(--line);
+  color: var(--ink-2);
+  white-space: nowrap;
+}
+.sval { font-family: var(--fd); font-weight: 700; font-size: 16px; text-align: right; white-space: nowrap; min-width: 62px; }
+.sval.pos { color: var(--ok); }
+.sval.neg { color: var(--hr); }
+
+/* activity feed — the reference's chat column, carrying events instead of
+   messages: there is no chat feature to show */
+.feed { padding-bottom: 8px; }
+.fsys {
+  display: flex;
+  gap: 12px;
+  padding: 14px;
+  margin: 0 -6px 12px;
+  border-radius: var(--r-md);
+  background: var(--panel-2);
+  box-shadow: var(--shadow);
+}
+.fsys b { display: block; font-size: 14px; color: var(--ink); margin-bottom: 4px; }
+.fsys p { margin: 0; font-size: 12.5px; color: var(--ink-2); line-height: 1.45; }
+.fitem { display: flex; gap: 12px; padding: 13px 0; border-top: 1px solid var(--line-soft); }
+.fico {
+  width: 38px; height: 38px;
+  border-radius: 99px;
+  display: grid;
+  place-items: center;
+  flex: none;
+  font-family: var(--fd);
+  font-weight: 800;
+  font-size: 15px;
+}
+.fico.f-used    { background: var(--hr-soft);     color: var(--hr); }
+.fico.f-react   { background: var(--brand-soft);  color: var(--brand-text); }
+.fico.f-granted { background: var(--breath-soft); color: var(--breath); }
+.fico.f-warn    { background: var(--warn-soft);   color: var(--warn); }
+.fbody { min-width: 0; flex: 1; }
+.fhead { display: flex; align-items: baseline; gap: 8px; }
+.fhead b { font-size: 14px; color: var(--ink); }
+.fhead time { margin-left: auto; font-size: 11.5px; color: var(--ink-3); white-space: nowrap; }
+.fbody p { margin: 3px 0 0; font-size: 13px; color: var(--ink-2); line-height: 1.45; }
+
+/* ============================================================
+   BILLING + PROFILE, in the same card language as Hours
+   ============================================================ */
+.bill-grid { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 22px; align-items: start; }
+.bill-grid .dl { margin-top: 18px; }
+.bill-grid .meter-note { margin-top: 14px; }
+.sval:not(.pos):not(.neg) { color: var(--ink); }
+
+.phero {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 24px;
+  padding: 26px 28px;
+  margin-bottom: 20px;
+  background:
+    radial-gradient(120% 140% at 0% 0%, var(--brand-soft), transparent 55%),
+    var(--panel);
+}
+.phero-av {
+  width: 88px; height: 88px;
+  border-radius: 99px;
+  display: grid;
+  place-items: center;
+  font-family: var(--fd);
+  font-weight: 800;
+  font-size: 30px;
+  color: var(--brand-ink);
+  background: linear-gradient(140deg, var(--hr), var(--brand));
+  box-shadow: 0 0 0 4px var(--panel), 0 0 0 6px var(--brand-line);
+}
+.phero-id h1 { font-size: 28px; margin-bottom: 4px; }
+.phero-id .pbio { margin: 10px 0 0; text-align: left; max-width: 52ch; }
+.pstats { display: grid; grid-template-columns: repeat(2, auto); gap: 14px 30px; }
+.pstats b { display: block; font-family: var(--fd); font-weight: 700; font-size: 24px; }
+.pstats span { font-size: 12.5px; color: var(--ink-3); }
+.pc-top { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+.pc-top .pc-h { margin: 0; }
+
+/* ============================================================
    RESPONSIVE — all breakpoints collected here, as in index.html
    ============================================================ */
+@media (max-width: 1240px) {
+  .hours-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr); }
+  .col-feed { grid-column: 1 / -1; }
+}
 @media (max-width: 920px) {
-  .sum { grid-template-columns: repeat(2, minmax(0,1fr)); gap: 20px 16px; }
-  .sum-op { display: none; }
-  .pcards { grid-template-columns: minmax(0,1fr); }
+  .hours-grid { grid-template-columns: minmax(0, 1fr); }
+  .bill-grid { grid-template-columns: minmax(0, 1fr); }
+  .phero { grid-template-columns: auto minmax(0, 1fr); }
+  .pstats { grid-column: 1 / -1; grid-template-columns: repeat(4, auto); justify-content: start; }
+    .pcards { grid-template-columns: minmax(0,1fr); }
 }
 @media (max-width: 620px) {
   /* The rail becomes a bottom bar: thumbs reach the bottom of a phone, not the
@@ -645,16 +919,43 @@ body { padding-left: var(--rail); }
     padding: 7px 8px;
   }
   .rail a { padding: 7px 2px 6px; }
+  /* header: keep the balance and the avatar, drop what has another route */
+  #openTopup, .who-name, .bal em { display: none; }
+  .dnav-end { gap: 10px; }
+  .acards { grid-template-columns: minmax(0, 1fr); gap: 40px; }
+  .acard { min-height: 150px; padding-top: 70px; }
+  .spills { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .srow { grid-template-columns: 42px minmax(0, 1fr) auto; }
+  .srow .kpill { display: none; }
+  .info-num b { font-size: 32px; }
+  .phero { grid-template-columns: minmax(0, 1fr); justify-items: start; padding: 22px; }
+  .pstats { grid-template-columns: repeat(2, auto); }
   /* Qualified: '.rail a' is (0,1,1) and would outrank a bare '.rail-me'. */
   .rail a.rail-me { display: none; }
   .dnav-in, .dmain { padding-inline: 20px; }
   .dmain { padding-top: 26px; }
   .dnav-in { gap: 14px; flex-wrap: wrap; }
-  .dback { margin-left: auto; }
-  .sum { grid-template-columns: minmax(0,1fr); }
   .packs { grid-template-columns: minmax(0,1fr); }
   .pack { grid-template-columns: auto auto; justify-items: start; align-items: baseline; gap: 4px 10px; text-align: left; }
-  .stats { gap: 22px; }
+}
+
+/* Hover only where hover exists: on touch screens :hover sticks after a tap
+   and would leave the ring spinning. */
+@media (hover: hover) {
+  .btn-ghost:hover::after, .ring:hover::after { opacity: 1; animation: ring-spin 2.6s linear infinite; }
+  .btn-ghost:hover, .ring:hover { box-shadow: 0 8px 26px -12px var(--brand-text); }
+  .ring.pack:hover, .ring.spill:hover { border-color: transparent; }
+}
+
+/* This file had no reduced-motion handling until the ring arrived. Same rule as
+   index.html: animations and transitions collapse to an instant, so the ring
+   shows but does not spin, and nothing slides. The row flash becomes a static
+   outline instead of vanishing at once. */
+@media (prefers-reduced-motion: reduce) {
+  * { animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; }
+  .srow.flash { animation: none; box-shadow: 0 0 0 2px var(--brand-text); }
+  .acard:hover, .acard:hover .aglyph { transform: none; }
+  .aglyph { transform: translateX(-50%) rotate(-9deg); }
 }
 </style>
 </head>
@@ -666,9 +967,12 @@ body { padding-left: var(--rail); }
       <img class="brand-logo brand-logo-dark" alt="StreamEmote" width="232" height="63" src="assets/logo-dark.png">
       <img class="brand-logo brand-logo-light" alt="StreamEmote" width="232" height="63" src="assets/logo-light.png">
     </a>
-    <div class="dnav-end">
-      <button class="dsignout" type="button" id="signOut" hidden>Sign out</button>
-      <a class="dback" href="index.html">Back to site</a>
+    <span class="pchip" title="Every figure in this dashboard is invented. Nothing is charged, cancelled or saved.">Prototype</span>
+    <div class="dnav-end" id="sessionChrome" hidden>
+      <button class="btn btn-ghost btn-sm" type="button" id="openTopup">Add hours</button>
+      <span class="bal" title="Hours left this month, including top-up and bonus"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.6V12l3 1.9"/></svg><b class="tnum">68</b><em>h left</em></span>
+      <a class="who" href="#profile"><span class="who-av" aria-hidden="true">DS</span><span class="who-name">Demo Streamer</span></a>
+      <button class="dsignout ring" type="button" id="signOut">Sign out</button>
     </div>
   </div>
 </nav>
@@ -698,70 +1002,110 @@ body { padding-left: var(--rail); }
     </div>
   </section>
 
-  <div class="proto" id="protoBanner" hidden>
-    <span><b>Prototype.</b> Every figure below is made up, and nothing here is charged, cancelled or saved anywhere.</span>
-  </div>
 
   <!-- ============================ HOURS ============================ -->
   <section class="view" id="view-usage">
-    <div class="vhead">
-      <h1>Your hours</h1>
-      <p>
-        Hours are counted only while the overlay is live in OBS — not while OBS
-        merely sits open. Top-up hours sit behind your monthly allowance and are
-        spent only once it runs out.
-      </p>
-    </div>
+    <div class="hours-grid">
 
-    <div class="sum">
-      <div class="sum-cell lead">
-        <span>Hours remaining</span>
-        <div><em class="sum-val tnum" style="font-style:normal">68</em><em class="sum-unit" style="font-style:normal">h</em></div>
-      </div>
-      <div class="sum-op" aria-hidden="true">=</div>
-      <div class="sum-cell">
-        <span>Plan allowance</span>
-        <div><em class="sum-val tnum" style="font-style:normal">56</em><em class="sum-unit" style="font-style:normal">h</em></div>
-      </div>
-      <div class="sum-op" aria-hidden="true">+</div>
-      <div class="sum-cell">
-        <span>Top-up</span>
-        <div><em class="sum-val tnum" style="font-style:normal">10</em><em class="sum-unit" style="font-style:normal">h</em></div>
-      </div>
-      <div class="sum-op" aria-hidden="true">+</div>
-      <div class="sum-cell">
-        <span>Bonus</span>
-        <div><em class="sum-val tnum" style="font-style:normal">2</em><em class="sum-unit" style="font-style:normal">h</em></div>
-      </div>
-    </div>
+      <!-- left column: the month so far -->
+      <div class="col">
+        <div class="card chart-card">
+          <div class="card-h"><span>This month</span><b class="tnum">24 h</b></div>
+          <svg class="chart" id="usageChart" viewBox="0 0 320 180" role="img"
+               aria-label="Hours used so far this month: 24 of 80, projected about 47 by month end"></svg>
+          <div class="chart-key">
+            <span><i class="k-used"></i>Used</span>
+            <span><i class="k-proj"></i>At this pace</span>
+            <span><i class="k-cap"></i>Monthly cap</span>
+          </div>
+        </div>
 
-    <div class="meter-wrap">
-      <div class="meter-top">
-        <span>This month · <b>24 h of 80 h</b> used</span>
-        <span class="right">Resets 1 Nov</span>
+        <div class="card">
+          <div class="card-h"><span>Recent sessions</span><em>colour = peak state</em></div>
+          <div class="spills" id="sessionPills"></div>
+        </div>
+
+        <div class="card last">
+          <div class="last-top">
+            <span class="last-av" aria-hidden="true">V</span>
+            <div><span class="mini">Last stream</span><b>Valorant</b></div>
+          </div>
+          <div class="last-stats">
+            <div><b class="tnum">4 h 30 m</b><span>on air</span></div>
+            <div><b class="tnum">171</b><span>peak bpm</span></div>
+          </div>
+          <button class="btn btn-ghost btn-sm" type="button" data-proto="recap cards are not wired up yet.">View recap</button>
+        </div>
       </div>
-      <div class="meter"><i style="width:30%"></i></div>
-      <p class="meter-note">
-        At your current pace you will finish the month with about 20 h unused.
-        Nothing stops mid-stream: if you hit the ceiling while live, the session
-        finishes and the next one is blocked until you top up.
-      </p>
-    </div>
 
-    <div class="bar-actions">
-      <button class="btn btn-primary btn-sm" type="button" id="openTopup">Add hours</button>
-      <a class="btn btn-ghost btn-sm" href="index.html#pricing">Change plan</a>
-      <span class="spacer"></span>
-    </div>
+      <!-- centre: where you stand, what to do, what happened -->
+      <div class="col">
+        <div class="card info">
+          <div class="card-h"><span>Information</span><a href="index.html#pricing">Change plan</a></div>
+          <div class="info-row">
+            <div class="info-num"><b class="tnum">56 h</b><span>left on your plan</span></div>
+            <span class="info-arrow" aria-hidden="true">&raquo;</span>
+            <div class="info-num lead"><b class="tnum">68 h</b><span>available in total</span></div>
+          </div>
+          <div class="info-actions">
+            <span class="xchip">+12 h from top-up and bonus</span>
+            <button class="btn btn-ghost btn-sm accent" type="button" data-open-topup>Add hours</button>
+          </div>
+          <div class="meter-wrap">
+            <div class="meter-top"><span>Used · <b>24 h of 80 h</b></span><span class="right">Resets 1 Nov</span></div>
+            <div class="meter"><i style="width:30%"></i></div>
+            <p class="meter-note">
+              At this pace you finish the month with about 33 h unused. Nothing stops
+              mid-stream: hit the ceiling while live and the session finishes, then the
+              next one waits for a top-up.
+            </p>
+          </div>
+        </div>
 
-    <div class="tabs" role="tablist" aria-label="Hours history">
-      <button type="button" role="tab" aria-selected="true"  data-filter="all">All</button>
-      <button type="button" role="tab" aria-selected="false" data-filter="used">Used</button>
-      <button type="button" role="tab" aria-selected="false" data-filter="bought">Purchased</button>
-      <button type="button" role="tab" aria-selected="false" data-filter="granted">Granted</button>
-    </div>
+        <div class="acards">
+          <a class="acard a-breath" href="index.html#reactions">
+            <svg class="aglyph" viewBox="0 0 100 100" aria-hidden="true"><g transform="translate(5 7)" class="g-depth"><path d="M50 4 C54 34 66 46 96 50 C66 54 54 66 50 96 C46 66 34 54 4 50 C34 46 46 34 50 4 Z"/></g><g class="g-face"><path d="M50 4 C54 34 66 46 96 50 C66 54 54 66 50 96 C46 66 34 54 4 50 C34 46 46 34 50 4 Z"/></g></svg>
+            <span>New emote packs land every month. See this month's set.</span>
+          </a>
+          <button class="acard a-brand" type="button" data-open-topup>
+            <svg class="aglyph" viewBox="0 0 100 100" aria-hidden="true"><g transform="translate(5 7)" class="g-depth"><rect x="38" y="6" width="24" height="88" rx="12"/><rect x="6" y="38" width="88" height="24" rx="12"/></g><g class="g-face"><rect x="38" y="6" width="24" height="88" rx="12"/><rect x="6" y="38" width="88" height="24" rx="12"/></g></svg>
+            <span>Running low? Add hours before your next stream.</span>
+            <i class="acard-go" aria-hidden="true">&rarr;</i>
+          </button>
+          <a class="acard a-hr" href="#profile">
+            <svg class="aglyph" viewBox="0 0 100 100" aria-hidden="true"><g transform="translate(5 7)" class="g-depth"><path d="M50 88 C20 66 6 50 6 32 C6 18 17 8 30 8 C39 8 46 13 50 20 C54 13 61 8 70 8 C83 8 94 18 94 32 C94 50 80 66 50 88 Z"/></g><g class="g-face"><path d="M50 88 C20 66 6 50 6 32 C6 18 17 8 30 8 C39 8 46 13 50 20 C54 13 61 8 70 8 C83 8 94 18 94 32 C94 50 80 66 50 88 Z"/></g></svg>
+            <span>Refer a streamer and you both get 5 hours.</span>
+          </a>
+        </div>
 
-    <div class="ledger" id="ledger" role="tabpanel"></div>
+        <div class="card">
+          <div class="card-h hist-h">
+            <span>History</span>
+            <span class="hist-sum"><b class="tnum">7</b> streams <b class="tnum">24 h</b> on air <b class="tnum">82 h</b> added</span>
+          </div>
+          <div class="tabs" role="tablist" aria-label="Hours history">
+            <button type="button" role="tab" aria-selected="true"  data-filter="all">All</button>
+            <button type="button" role="tab" aria-selected="false" data-filter="used">Used</button>
+            <button type="button" role="tab" aria-selected="false" data-filter="bought">Purchased</button>
+            <button type="button" role="tab" aria-selected="false" data-filter="granted">Granted</button>
+          </div>
+          <div class="srows" id="ledger" role="tabpanel"></div>
+        </div>
+      </div>
+
+      <!-- right column: activity -->
+      <aside class="col col-feed">
+        <div class="card feed">
+          <div class="card-h"><span>Activity</span><em class="tnum">6</em></div>
+          <div class="fsys">
+            <span class="fico f-warn" aria-hidden="true">!</span>
+            <div><b>Bonus hours expire 1 Nov</b><p>You have 2 bonus hours, used only once your plan allowance runs out. At this pace it will not this month, so as things stand they expire unused.</p></div>
+          </div>
+          <div id="feed"></div>
+        </div>
+      </aside>
+
+    </div>
   </section>
 
   <!-- ============================ BILLING ============================ -->
@@ -770,69 +1114,35 @@ body { padding-left: var(--rail); }
       <h1>Billing</h1>
       <p>Your plan, what renews when, and every payment so far.</p>
     </div>
-
-    <div class="tabs" role="tablist" aria-label="Billing sections">
-      <button type="button" role="tab" aria-selected="true"  data-pane="plan">Plan</button>
-      <button type="button" role="tab" aria-selected="false" data-pane="payments">Payments</button>
-    </div>
-
-    <div id="pane-plan" role="tabpanel" style="margin-top:18px">
-      <div class="pcard">
-        <div class="pcard-h">
-          <h2>Pro</h2>
-          <span class="tag-ok">Active</span>
+    <div class="bill-grid">
+      <div class="card">
+        <div class="card-h"><span>Current plan</span><span class="tag-ok">Active</span></div>
+        <div class="info-row">
+          <div class="info-num lead"><b>Pro</b><span>80 h per month, billed monthly</span></div>
+          <span class="info-arrow" aria-hidden="true">&raquo;</span>
+          <div class="info-num"><b class="tnum">$9.00</b><span>due 1 Nov 2026</span></div>
         </div>
-        <span class="pcard-x">Renews 1 Nov 2026 · 80 h per month · billed monthly</span>
         <dl class="dl">
-          <div class="drow"><dt>Next billing amount</dt><dd>$9.00</dd></div>
-          <div class="drow sub"><dt>Subtotal</dt><dd>$9.00</dd></div>
-          <div class="drow sub"><dt>Tax</dt><dd>$0.00</dd></div>
+          <div class="drow"><dt>Subtotal</dt><dd>$9.00</dd></div>
+          <div class="drow"><dt>Tax</dt><dd>$0.00</dd></div>
           <div class="drow"><dt>Billing method</dt><dd>Card ending 4242</dd></div>
           <div class="drow"><dt>Next renewal</dt><dd>1 Nov 2026</dd></div>
-          <div class="drow total"><dt>Total due 1 Nov</dt><dd>$9.00</dd></div>
         </dl>
-        <div class="bar-actions" style="margin-bottom:0">
-          <a class="btn btn-ghost btn-sm" href="index.html#pricing">Switch to annual · save 17%</a>
-          <button class="btn btn-ghost btn-sm" type="button" id="cancelPlan">Cancel plan</button>
+        <div class="info-actions">
+          <a class="btn btn-ghost btn-sm accent" href="index.html#pricing">Switch to annual &middot; save 17%</a>
+          <button class="btn btn-ghost btn-sm" type="button" id="cancelPlan" data-proto="nothing was cancelled. This is where the retention flow would run.">Cancel plan</button>
         </div>
+        <p class="meter-note">
+          Cancelling keeps the overlay you built and your remaining top-up hours.
+          The monthly allowance stops at the end of the period you have paid for.
+        </p>
       </div>
-      <p class="meter-note" style="margin-top:14px">
-        Cancelling keeps the overlay you built and your remaining top-up hours.
-        The monthly allowance stops at the end of the period you have paid for.
-      </p>
-    </div>
-
-    <div id="pane-payments" role="tabpanel" hidden style="margin-top:18px">
-      <div class="ledger">
-        <div class="lrow">
-          <div>
-            <div class="lrow-t">Pro — monthly</div>
-            <div class="lrow-s">1 Oct 2026, 09:14 · card ending 4242</div>
-          </div>
-          <div>
-            <div class="lrow-v">$9.00</div>
-            <div class="lrow-x">Invoice</div>
-          </div>
-        </div>
-        <div class="lrow">
-          <div>
-            <div class="lrow-t">Top-up — 40 hours</div>
-            <div class="lrow-s">18 Sep 2026, 21:40 · card ending 4242</div>
-          </div>
-          <div>
-            <div class="lrow-v">$10.00</div>
-            <div class="lrow-x">Invoice</div>
-          </div>
-        </div>
-        <div class="lrow">
-          <div>
-            <div class="lrow-t">Pro — monthly</div>
-            <div class="lrow-s">1 Sep 2026, 09:14 · card ending 4242</div>
-          </div>
-          <div>
-            <div class="lrow-v">$9.00</div>
-            <div class="lrow-x">Invoice</div>
-          </div>
+      <div class="card">
+        <div class="card-h"><span>Payments</span><em>3 so far</em></div>
+        <div class="srows">
+          <div class="srow"><span class="sav k-bought"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><rect x="3" y="5.5" width="18" height="13" rx="2.6"/><path d="M3 10h18"/></svg></span><div class="smain"><div class="st">Pro &mdash; monthly</div><div class="ss">1 Oct 2026, 09:14 &middot; card ending 4242</div></div><span class="kpill">Paid</span><div class="sval tnum">$9.00</div></div>
+          <div class="srow"><span class="sav k-bought"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><rect x="3" y="5.5" width="18" height="13" rx="2.6"/><path d="M3 10h18"/></svg></span><div class="smain"><div class="st">Top-up &mdash; 40 hours</div><div class="ss">18 Sep 2026, 21:40 &middot; card ending 4242</div></div><span class="kpill">Paid</span><div class="sval tnum">$10.00</div></div>
+          <div class="srow"><span class="sav k-bought"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><rect x="3" y="5.5" width="18" height="13" rx="2.6"/><path d="M3 10h18"/></svg></span><div class="smain"><div class="st">Pro &mdash; monthly</div><div class="ss">1 Sep 2026, 09:14 &middot; card ending 4242</div></div><span class="kpill">Paid</span><div class="sval tnum">$9.00</div></div>
         </div>
       </div>
     </div>
@@ -840,34 +1150,36 @@ body { padding-left: var(--rail); }
 
   <!-- ============================ PROFILE ============================ -->
   <section class="view" id="view-profile" hidden>
-    <div class="phead">
-      <div class="avatar" aria-hidden="true">DS</div>
-      <h1>Demo Streamer</h1>
-      <span class="handle">@demo_streamer</span>
-      <p class="pbio">Variety streamer. Mostly tactical shooters, occasionally a horror game I regret.</p>
-      <div class="stats">
-        <div class="stat"><b class="tnum">38</b><span>Streams</span></div>
-        <div class="stat"><b class="tnum">164</b><span>Hours on air</span></div>
-        <div class="stat"><b class="tnum">178</b><span>Peak bpm</span></div>
-        <div class="stat"><b class="tnum">12</b><span>Recaps shared</span></div>
+    <div class="card phero">
+      <span class="phero-av" aria-hidden="true">DS</span>
+      <div class="phero-id">
+        <h1>Demo Streamer</h1>
+        <span class="handle">@demo_streamer</span>
+        <p class="pbio">Variety streamer. Mostly tactical shooters, occasionally a horror game I regret.</p>
+      </div>
+      <div class="pstats">
+        <div><b class="tnum">38</b><span>streams</span></div>
+        <div><b class="tnum">164 h</b><span>on air</span></div>
+        <div><b class="tnum">178</b><span>peak bpm</span></div>
+        <div><b class="tnum">12</b><span>recaps shared</span></div>
       </div>
     </div>
 
     <div class="pcards">
-      <div class="pc">
-        <div class="pc-h">Plan</div>
-        <div class="pc-v">Pro · 80 h</div>
+      <div class="card">
+        <div class="pc-top"><span class="fico f-react"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3.5 14.6 9l6 .7-4.5 4.1 1.2 5.9L12 16.8l-5.3 2.9 1.2-5.9L3.4 9.7l6-.7z"/></svg></span><span class="pc-h">Plan</span></div>
+        <div class="pc-v">Pro &middot; 80 h</div>
         <p>Renews 1 Nov 2026. Every overlay style and emote pack included.</p>
       </div>
-      <div class="pc">
-        <div class="pc-h">Bonus hours</div>
+      <div class="card">
+        <div class="pc-top"><span class="fico f-granted"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></span><span class="pc-h">Bonus hours</span></div>
         <div class="pc-v tnum">2 h</div>
-        <p>Earned from finishing setup. Bonus hours expire 30 days after they land.</p>
+        <p>From finishing setup. Bonus hours expire 30 days after they land &mdash; these on 1 Nov.</p>
       </div>
-      <div class="pc">
-        <div class="pc-h">Referral</div>
+      <div class="card">
+        <div class="pc-top"><span class="fico f-used"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M12 20s-7.6-4.6-7.6-10A4.3 4.3 0 0 1 12 7.4 4.3 4.3 0 0 1 19.6 10c0 5.4-7.6 10-7.6 10z" fill="currentColor"/></svg></span><span class="pc-h">Referral</span></div>
         <div class="pc-v tnum">0 h earned</div>
-        <p>Both of you get 5 hours when someone streams their first hour.</p>
+        <p>You both get 5 hours when someone you invite streams their first hour.</p>
         <span class="code">SE-DEMO-4KQ2</span>
       </div>
     </div>
@@ -885,13 +1197,13 @@ body { padding-left: var(--rail); }
     <p>A one-off purchase, so your billing period is untouched.</p>
 
     <div class="packs" role="radiogroup" aria-label="Hour packs">
-      <div class="pack" role="radio" tabindex="0" aria-checked="false" data-h="10" data-p="3">
+      <div class="pack ring" role="radio" tabindex="0" aria-checked="false" data-h="10" data-p="3">
         <span class="pack-h">+10 h</span><span class="pack-p">$3</span><span class="pack-r mono">$0.30 / h</span>
       </div>
-      <div class="pack" role="radio" tabindex="0" aria-checked="true" data-h="40" data-p="10">
+      <div class="pack ring" role="radio" tabindex="0" aria-checked="true" data-h="40" data-p="10">
         <span class="pack-h">+40 h</span><span class="pack-p">$10</span><span class="pack-r mono">$0.25 / h</span>
       </div>
-      <div class="pack" role="radio" tabindex="0" aria-checked="false" data-h="120" data-p="24">
+      <div class="pack ring" role="radio" tabindex="0" aria-checked="false" data-h="120" data-p="24">
         <span class="pack-h">+120 h</span><span class="pack-p">$24</span><span class="pack-r mono">$0.20 / h</span>
       </div>
     </div>
@@ -914,6 +1226,8 @@ body { padding-left: var(--rail); }
 <script>
 (function () {
   "use strict";
+
+  var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   /* ---------------- hash routing ----------------
      Three views in one document. No framework: the landing page is vanilla
@@ -941,45 +1255,155 @@ body { padding-left: var(--rail); }
     if (typeof applySession === "function") applySession(); else route();
   });
 
-  /* ---------------- hours ledger ----------------
-     One dataset, filtered by tab. Kinds map to the tabs: used / bought /
-     granted. Kling has a fifth "Transfer Out" tab; there is no transfer
-     feature here, so inventing the tab would imply one. */
-  var ENTRIES = [
-    { kind: "granted", title: "Monthly allowance",      sub: "1 Oct 2026, 00:00",  amount: 80,    note: "Pro · resets monthly" },
-    { kind: "used",    title: "Stream — Valorant",      sub: "4 Oct 2026, 20:12",  amount: -4.2,  note: "4 h 12 m on air" },
-    { kind: "used",    title: "Stream — Phasmophobia",  sub: "3 Oct 2026, 22:03",  amount: -2.8,  note: "2 h 48 m on air" },
-    { kind: "granted", title: "Bonus hours — setup",    sub: "2 Oct 2026, 14:20",  amount: 2,     note: "Expires 1 Nov", pill: "Expiring soon" },
-    { kind: "used",    title: "Stream — Just chatting", sub: "2 Oct 2026, 19:40",  amount: -1.5,  note: "1 h 30 m on air" },
-    { kind: "bought",  title: "Top-up — 40 hours",      sub: "18 Sep 2026, 21:40", amount: 40,    note: "Does not expire" },
-    { kind: "used",    title: "Stream — Valorant",      sub: "17 Sep 2026, 21:15", amount: -5.1,  note: "5 h 06 m on air" },
-    { kind: "used",    title: "Stream — Elden Ring",    sub: "15 Sep 2026, 18:02", amount: -10.4, note: "10 h 24 m on air" }
+  /* ---------------- data ----------------
+     One source of truth. Everything on the Hours view — the history, the
+     chart, the session pills, the October summary — is derived from these
+     two arrays, so the figures cannot drift out of agreement with each other.
+
+     A mid-October snapshot: 7 streams = 24 h used of 80, leaving 56 on the
+     plan. September overran its allowance and spent 30 of a 40 h top-up,
+     leaving 10. Plus 2 bonus hours. 56 + 10 + 2 = 68 available. */
+  var SESSIONS = [
+    { day: 15, time: "23:41", game: "Valorant",      h: 4.5, peak: "rage",   bpm: 171 },
+    { day: 12, time: "22:10", game: "Phasmophobia",  h: 2.4, peak: "clutch", bpm: 148 },
+    { day: 9,  time: "23:02", game: "Valorant",      h: 3.6, peak: "rage",   bpm: 166 },
+    { day: 7,  time: "21:30", game: "Elden Ring",    h: 5.0, peak: "calm",   bpm: 104 },
+    { day: 4,  time: "23:55", game: "Valorant",      h: 4.2, peak: "rage",   bpm: 178 },
+    { day: 3,  time: "22:48", game: "Phasmophobia",  h: 2.8, peak: "clutch", bpm: 151 },
+    { day: 2,  time: "20:15", game: "Just chatting", h: 1.5, peak: "calm",   bpm: 82 }
   ];
+  var CAP = 80, DAYS = 31, TODAY = 16;
 
-  var ledger = document.getElementById("ledger");
-
+  function hm(h) {
+    var whole = Math.floor(h), mins = Math.round((h - whole) * 60);
+    return whole + " h" + (mins ? " " + (mins < 10 ? "0" : "") + mins + " m" : "");
+  }
   function fmt(h) {
-    var s = (Math.round(h * 10) / 10).toFixed(1).replace(/\.0$/, "");
-    return (h > 0 ? "+" : "") + s + " h";
+    var v = (Math.round(h * 10) / 10).toFixed(1).replace(/\.0$/, "");
+    return (h > 0 ? "+" : "−") + v.replace("-", "") + " h";
   }
 
+  var ENTRIES = SESSIONS.map(function (x) {
+    return { kind: "used", stream: true, key: "s" + x.day, title: x.game, sub: x.day + " Oct 2026, " + x.time,
+             amount: -x.h, note: hm(x.h) + " on air" };
+  }).concat([
+    { kind: "granted", title: "Bonus hours — setup", sub: "2 Oct 2026, 14:20", amount: 2,   note: "Expires 1 Nov", pill: "Expiring soon" },
+    { kind: "granted", title: "Monthly allowance",       sub: "1 Oct 2026, 00:00", amount: 80,  note: "Pro · resets monthly" },
+    { kind: "used",    title: "Top-up hours used",       sub: "28 Sep 2026, 23:59", amount: -30, note: "After September’s allowance ran out" },
+    { kind: "bought",  title: "Top-up — 40 hours",  sub: "18 Sep 2026, 21:40", amount: 40,  note: "Does not expire" }
+  ]);
+
+  var ICON = {
+    used:    '<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M8 5.5v13l10.5-6.5z" fill="currentColor"/></svg>',
+    bought:  '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><rect x="3" y="5.5" width="18" height="13" rx="2.6"/><path d="M3 10h18"/></svg>',
+    granted: '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>',
+    bolt:    '<svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><path d="M13.5 2.5 5 13.5h6l-1 8 8.5-11h-6z" fill="currentColor"/></svg>'
+  };
+  var KIND_LABEL = { used: "Used", bought: "Purchased", granted: "Granted" };
+
+  /* ---------------- history ---------------- */
+  var ledger = document.getElementById("ledger");
   function render(filter) {
     var rows = ENTRIES.filter(function (e) { return filter === "all" || e.kind === filter; });
     if (!rows.length) {
-      ledger.innerHTML =
-        '<div class="empty"><strong>Nothing here yet</strong>' +
-        "Hours you buy will show up in this tab.</div>";
+      ledger.innerHTML = '<div class="empty"><strong>Nothing here yet</strong>Hours you buy will show up in this tab.</div>';
       return;
     }
     ledger.innerHTML = rows.map(function (e) {
-      return '<div class="lrow"><div><div class="lrow-t">' + e.title +
-        (e.pill ? ' <span class="pill">' + e.pill + "</span>" : "") +
-        '</div><div class="lrow-s">' + e.sub + "</div></div>" +
-        '<div><div class="lrow-v ' + (e.amount > 0 ? "pos" : "neg") + ' tnum">' +
-        fmt(e.amount) + '</div><div class="lrow-x">' + e.note + "</div></div></div>";
+      return '<div class="srow"' + (e.key ? ' data-key="' + e.key + '"' : "") + '><span class="sav k-' + e.kind + '">' + ICON[e.kind] + '</span>' +
+        '<div class="smain"><div class="st">' + e.title +
+        (e.pill ? ' <span class="pill">' + e.pill + "</span>" : "") + "</div>" +
+        '<div class="ss">' + e.sub + " · " + e.note + "</div></div>" +
+        '<span class="kpill">' + KIND_LABEL[e.kind] + "</span>" +
+        '<div class="sval ' + (e.amount > 0 ? "pos" : "neg") + ' tnum">' + fmt(e.amount) + "</div></div>";
     }).join("");
   }
   render("all");
+
+  /* October summary, computed rather than typed */
+  (function () {
+    var streams = SESSIONS.length;
+    var onAir = SESSIONS.reduce(function (t, x) { return t + x.h; }, 0);
+    var added = ENTRIES.filter(function (e) { return e.amount > 0 && / Oct /.test(e.sub); })
+                       .reduce(function (t, e) { return t + e.amount; }, 0);
+    document.querySelector(".hist-sum").innerHTML =
+      "October <b>" + streams + "</b> streams <b>" + hm(onAir).replace(" 00 m", "") + "</b> on air <b>" + added + " h</b> added";
+  })();
+
+  /* ---------------- chart: cumulative hours against the cap ---------------- */
+  (function () {
+    var svg = document.getElementById("usageChart");
+    var L = 30, R = 306, T = 16, B = 158;
+    function x(d) { return L + (d - 1) / (DAYS - 1) * (R - L); }
+    function y(h) { return B - h / CAP * (B - T); }
+    var byDay = {};
+    SESSIONS.forEach(function (s) { byDay[s.day] = (byDay[s.day] || 0) + s.h; });
+    var pts = [], cum = 0;
+    for (var d = 1; d <= TODAY; d++) { cum += byDay[d] || 0; pts.push([x(d), y(cum)]); }
+    var projEnd = cum / TODAY * DAYS;
+    var f = function (n) { return n.toFixed(1); };
+    var line = pts.map(function (q, i) { return (i ? "L" : "M") + f(q[0]) + " " + f(q[1]); }).join(" ");
+    var last = pts[pts.length - 1];
+    var area = line + " L" + f(last[0]) + " " + B + " L" + f(pts[0][0]) + " " + B + " Z";
+    var grid = [0, 20, 40, 60].map(function (h) {
+      return '<line x1="' + L + '" x2="' + R + '" y1="' + f(y(h)) + '" y2="' + f(y(h)) + '"/>' +
+             '<text class="ylab" x="' + (L - 7) + '" y="' + f(y(h) + 3) + '" text-anchor="end">' + h + "</text>";
+    }).join("");
+    svg.innerHTML =
+      '<g class="grid">' + grid + "</g>" +
+      '<line class="cap" x1="' + L + '" x2="' + R + '" y1="' + y(CAP) + '" y2="' + y(CAP) + '"/>' +
+      '<text class="caplab" x="' + (L - 7) + '" y="' + (y(CAP) + 3) + '" text-anchor="end">' + CAP + "</text>" +
+      '<path class="area" d="' + area + '"/>' +
+      '<path class="line" d="' + line + '"/>' +
+      '<path class="proj" d="M' + f(last[0]) + " " + f(last[1]) + " L" + f(x(DAYS)) + " " + f(y(projEnd)) + '"/>' +
+      '<circle class="dot" cx="' + f(last[0]) + '" cy="' + f(last[1]) + '" r="5"/>' +
+      '<text class="endlab" x="' + f(last[0] - 6) + '" y="' + f(last[1] - 12) + '" text-anchor="end">' + Math.round(cum) + " h</text>";
+  })();
+
+  /* ---------------- session pills ---------------- */
+  (function () {
+    var el = document.getElementById("sessionPills");
+    /* Real buttons, because they now look like ones: a hover ring on something
+       that does nothing would be a lie. A click opens the Used tab and points
+       at that session. */
+    el.innerHTML = SESSIONS.slice(0, 4).map(function (x) {
+      var h = (Math.round(x.h * 10) / 10).toFixed(1);
+      return '<button type="button" class="spill ring s-' + x.peak + '" data-key="s' + x.day + '"' +
+        ' title="' + x.game + " \u00b7 peak " + x.bpm + " bpm, " + x.peak + '"' +
+        ' aria-label="' + x.game + ", " + x.day + " October, " + h + " hours, peak " + x.peak + '. Show in history">' +
+        h + " h<small>" + x.day + " Oct</small></button>";
+    }).join("");
+    el.addEventListener("click", function (ev) {
+      var b = ev.target.closest(".spill");
+      if (!b) return;
+      document.querySelector('#view-usage [role="tab"][data-filter="used"]').click();
+      var row = ledger.querySelector('.srow[data-key="' + b.dataset.key + '"]');
+      if (!row) return;
+      row.scrollIntoView({ block: "center", behavior: reduce ? "auto" : "smooth" });
+      row.classList.remove("flash");
+      void row.offsetWidth; /* restart the animation if the same pill is pressed twice */
+      row.classList.add("flash");
+    });
+    el.insertAdjacentHTML("afterend",
+      '<div class="plegend"><span><i class="s-calm"></i>Calm</span><span><i class="s-clutch"></i>Clutch</span><span><i class="s-rage"></i>Rage</span></div>');
+  })();
+
+  /* ---------------- activity feed ---------------- */
+  (function () {
+    var FEED = [
+      { cls: "f-used",    icon: "used",    title: "Session ended",     time: "15 Oct, 23:41", text: "Valorant · 4 h 30 m on air · peak 171 bpm" },
+      { cls: "f-react",   icon: "bolt",    title: "Rage fired 6 times", time: "15 Oct, 22:58", text: "During Valorant. The 90 s cooldown held back two more." },
+      { cls: "f-used",    icon: "used",    title: "Session ended",     time: "12 Oct, 22:10", text: "Phasmophobia · 2 h 24 m on air · peak 148 bpm" },
+      { cls: "f-granted", icon: "granted", title: "Bonus hours added", time: "2 Oct, 14:20",  text: "2 h for finishing setup." },
+      { cls: "f-granted", icon: "granted", title: "Allowance reset",   time: "1 Oct, 00:00",  text: "80 h for October on Pro." },
+      { cls: "f-used",    icon: "bought",  title: "Top-up hours used", time: "28 Sep, 23:59", text: "30 h, after September’s allowance ran out. 10 h left." }
+    ];
+    document.getElementById("feed").innerHTML = FEED.map(function (e) {
+      return '<div class="fitem"><span class="fico ' + e.cls + '">' + ICON[e.icon] + "</span>" +
+        '<div class="fbody"><div class="fhead"><b>' + e.title + "</b><time>" + e.time + "</time></div>" +
+        "<p>" + e.text + "</p></div></div>";
+    }).join("");
+  })();
 
   /* ---------------- tab rows ----------------
      Shared handler: a tablist either filters the ledger (data-filter) or
@@ -1038,6 +1462,9 @@ body { padding-left: var(--rail); }
     if (lastFocus) lastFocus.focus();
   }
   document.getElementById("openTopup").addEventListener("click", openSheet);
+  Array.prototype.forEach.call(document.querySelectorAll("[data-open-topup]"), function (b) {
+    b.addEventListener("click", openSheet);
+  });
   document.getElementById("closeTopup").addEventListener("click", closeSheet);
   scrim.addEventListener("click", function (ev) { if (ev.target === scrim) closeSheet(); });
   document.addEventListener("keydown", function (ev) {
@@ -1061,7 +1488,6 @@ body { padding-left: var(--rail); }
      localStorage throws in a private window. */
   var SESSION_KEY = "se.demo.session";
   var gate = document.getElementById("gate");
-  var banner = document.getElementById("protoBanner");
   var outBtn = document.getElementById("signOut");
 
   function signedIn() {
@@ -1076,8 +1502,7 @@ body { padding-left: var(--rail); }
   function applySession() {
     var on = signedIn();
     gate.hidden = on;
-    banner.hidden = !on;
-    outBtn.hidden = !on;
+    document.getElementById("sessionChrome").hidden = !on;
     document.getElementById("rail").hidden = !on;
     if (on) {
       route();
@@ -1100,12 +1525,18 @@ body { padding-left: var(--rail); }
 
   applySession();
 
-  document.getElementById("cancelPlan").addEventListener("click", function () {
-    var note = document.createElement("p");
-    note.className = "meter-note";
-    note.textContent = "Prototype — nothing was cancelled. This is where the retention flow would run.";
-    this.parentNode.parentNode.appendChild(note);
-    this.disabled = true;
+  /* Buttons that stand in for flows that do not exist yet. Each says so once,
+     inside the card it was pressed in. */
+  Array.prototype.forEach.call(document.querySelectorAll("[data-proto]"), function (b) {
+    b.addEventListener("click", function () {
+      if (b.dataset.done) return;
+      b.dataset.done = "1";
+      var note = document.createElement("p");
+      note.className = "meter-note";
+      note.textContent = "Prototype — " + b.dataset.proto;
+      (b.closest(".card, .pcard") || b.parentNode).appendChild(note);
+      b.disabled = true;
+    });
   });
 })();
 </script>
