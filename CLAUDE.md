@@ -14,25 +14,33 @@ API. Everything on the page is a simulation for demo purposes.
 ## Structure
 
 ```
-index.html          the entire site — markup, CSS and JS in one file (~2,600 lines)
+index.html          the landing page — markup, CSS and JS in one file (~2,800 lines)
+dashboard.html      account dashboard prototype: hours, billing, profile (~1,500 lines)
 assets/
-  logo-dark.png     shown in dark mode
+  logo-dark.png     shown in dark mode (dashboard; the landing inlines its own copy)
   logo-light.png    shown in light mode
+tools/serve.js      static dev server
+vercel.json         static deploy config — no framework, no build
+.vercelignore       keeps CLAUDE.md, tools/ and .claude/ off the public site
 .claude/launch.json dev server config
 README.md           title only
 ```
 
 There is no build step, no package manager, no dependencies to install. Google
-Fonts (Archivo, Karla, Martian Mono) load from CDN; everything else is inline.
+Fonts (Outfit, Manrope, Martian Mono) load from CDN; everything else is inline.
 
 ## Running it
 
 ```bash
-python -m http.server 5173 --bind 127.0.0.1
+node tools/serve.js
 ```
 
-Then open http://127.0.0.1:5173. Open the file directly with `file://` and it
-mostly works, but serve it to keep asset paths and canvas behaviour honest.
+Then open http://127.0.0.1:5173 (pass a port as the first argument, or set
+`PORT`). Not `python -m http.server`: when launched from another project's
+preview the process inherits an unreadable working directory and Python dies
+in `os.getcwd()` before serving anything. `serve.js` resolves its root from its
+own location instead. Opening the file over `file://` mostly works, but serve
+it to keep asset paths and canvas behaviour honest.
 
 ## Layout of index.html
 
@@ -76,12 +84,32 @@ case, once under `:root[data-theme="light"]` for the explicit toggle. Any new
 colour needs a token in both places. Never hardcode a hex outside the TOKENS
 block.
 
-**Colour semantics.** `--hr` red, `--breath` cyan, `--ok`/`--warn`/`--crit` for
-stress states, `--brand` violet. Emote packs get a `--p-<name>` pair (glyph
-colour + background disc).
+**Two files share the foundations.** `dashboard.html` carries a copy of the
+TOKENS, BASE and BUTTONS blocks, made by script so they start identical. They
+must change together: edit both, and diff the TOKENS block between the files
+before committing.
 
-**Type.** `--fd` Archivo for display, `--fb` Karla for body, `--fm` Martian Mono
-for labels and data. The `.mono` and `.tnum` (tabular figures) helpers exist —
+**Colour semantics.** An indigo night: navy ground, lifted panels, and three
+saturated accents that are also the three signals — `--breath` azure,
+`--brand` violet, `--hr` coral. `--ok`/`--warn`/`--crit` for stress states.
+Emote packs get a `--p-<name>` pair (glyph colour + background disc).
+
+Two tokens exist for contrast, not decoration:
+
+- `--brand-text` — `--brand` fills buttons under white text, which needs it
+  dark; violet *text* on a panel needs it light. No single violet does both, so
+  text, chart lines, the focus ring and selection indicators use this one.
+- `--stage-ink` — text on the demo stage. The stage stays dark in light theme
+  too, so `--ink` would vanish against it. Same value in every palette.
+
+Every text element on both pages clears WCAG AA in both themes (4.5:1, or 3:1
+for large text). Text over a gradient is the exception to automated checking —
+the dashboard's accent cards deepen toward `--stage` under their text for that
+reason. Re-check contrast after any palette change; the panels are light
+enough that it is easy to slip under.
+
+**Type.** `--fd` Outfit for display, `--fb` Manrope for body, `--fm` Martian
+Mono for labels and data. The `.mono` and `.tnum` (tabular figures) helpers exist —
 use them rather than restating font properties.
 
 **JS reads the tokens, not the other way round.** Canvas trace colours are pulled
